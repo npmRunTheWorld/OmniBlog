@@ -1,0 +1,59 @@
+@mixin row{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+  width: 100%;
+}
+
+@mixin row-start {
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+  width: 100%;
+}
+
+@mixin row-end {
+   display: flex;
+   align-items: center;
+   justify-content: flex-end;
+  width: 100%;
+}
+
+@mixin col {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+  width: 100%;
+}
+
+@mixin col-start {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-start;
+   align-items: flex-start;
+  width: 100%;
+}
+
+@mixin col-start2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@mixin col-end {
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
+   align-items: center;
+   width: 100%;
+}
+
+
+@mixin border(){
+  border : 1px solid red;
+}
+
+
