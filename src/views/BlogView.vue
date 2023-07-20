@@ -1,7 +1,7 @@
 <script setup>
 //imports
 import { ref, reactive, watch, computed, onBeforeUnmount } from "vue";
-import useBlogCard from "../stores/blogCard_SM";
+import useBlogCard from "../stores/blogStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 

@@ -3,7 +3,7 @@
 import { ref, reactive, toRef, computed } from "vue";
 
 import { arrowRight, edit, trash } from "@/assets/Icons";
-import useBlogCard from "../stores/blogCard_SM";
+import useBlogCard from "../stores/blogStore";
 
 defineProps({
   //props

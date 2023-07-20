@@ -18,7 +18,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["logout"]);
+const emit = defineEmits(["logout", "routechange"]);
 
 //states
 const showProfile = ref(false);
@@ -58,8 +58,10 @@ function routeChange(instruction) {
   if (instruction === "logout") {
     emit("logout");
   } else {
-    showProfile.value = false;
+    emit("routechange");
   }
+
+  showProfile.value = false;
 }
 //
 </script>

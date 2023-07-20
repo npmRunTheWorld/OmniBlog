@@ -87,6 +87,10 @@ function toggleMobileNav() {
   mobile.isMobileMenuClicked = !mobile.isMobileMenuClicked;
   mobile.isMobileNav = !mobile.isMobileNav;
 }
+
+function mobileRouteChangeEffect() {
+  toggleMobileNav();
+}
 </script>
 
 <template>
@@ -148,6 +152,7 @@ function toggleMobileNav() {
                   :isMobile="mobile.isMobile"
                   v-else
                   @logout="$emit('logout')"
+                  @routechange="mobileRouteChangeEffect"
                 />
               </div>
               <RouterLink

@@ -2,11 +2,11 @@
 //imports
 import { ref, reactive } from "vue";
 import { useVirtualList } from "@vueuse/core";
-
+//https://1fichier.com/?i8mvv00uw03l8h2b7w0b
 import BlogPostCard from "../components/BlogPostCard.vue";
 import BlogCard from "../components/BlogCard.vue";
 import { arrowRight } from "../assets/Icons";
-import useBlogCard from "../stores/blogCard_SM";
+import useBlogCard from "../stores/blogStore";
 import useUserStore from "../stores/userStore";
 import { storeToRefs } from "pinia";
 
@@ -34,6 +34,7 @@ const sampleBlogPost = reactive([
 //functions
 
 function bp_fillerBlog(title, blog, image) {
+  console.log("hello");
   return {
     title: title || "filler title",
     blogHTML: blog || "This is a filler blog post",
