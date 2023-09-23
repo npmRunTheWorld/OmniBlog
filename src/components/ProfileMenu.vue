@@ -1,6 +1,6 @@
 <script setup>
 //imports
-import { ref, reactive, onMounted, onUnmounted, defineEmits } from "vue";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
 import { RouterLink } from "vue-router";
 import useUserStore from "../stores/userStore";
 import { storeToRefs } from "pinia";

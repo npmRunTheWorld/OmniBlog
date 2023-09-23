@@ -1,13 +1,5 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  onBeforeMount,
-  onMounted,
-  onUpdated,
-  watchEffect,
-  watch,
-} from "vue";
+import { ref, reactive, onBeforeMount, onMounted, watchEffect } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import Navigation from "./components/Navigation.vue";
 import Footer from "./components/Footer.vue";
@@ -83,6 +75,9 @@ function checkAuth() {
     } else {
       navState.userLoggedIn = false;
       console.log("No user found");
+      setTimeout(() => {
+        isPageLoad.value = false;
+      }, 1500);
     }
   });
 }

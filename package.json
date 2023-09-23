@@ -19,7 +19,8 @@
     "uuid": "^9.0.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0",
-    "vue-svg-loader": "^0.16.0"
+    "vue-svg-loader": "^0.16.0",
+    "vue3-quill": "^0.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
