@@ -10,14 +10,8 @@ import { setUser } from "../firebase/quries/getUser";
 defineProps({});
 
 const userStore = useUserStore();
-const {
-  profileInitials,
-  profileEmail,
-  profileFirstName,
-  profileLastName,
-  profileUserName,
-  profileId,
-} = storeToRefs(userStore);
+const { initials, email, firstName, lastName, userName, uid } =
+  storeToRefs(userStore);
 const inputs = reactive({
   firstName: "",
   lastName: "",
@@ -32,10 +26,10 @@ const modal = reactive({
 });
 //lifecycle
 onMounted(() => {
-  inputs.firstName = profileFirstName.value;
-  inputs.lastName = profileLastName.value;
-  inputs.email = profileEmail.value;
-  inputs.username = profileUserName.value;
+  inputs.firstName = firstName.value;
+  inputs.lastName = lastName.value;
+  inputs.email = email.value;
+  inputs.username = userName.value;
 });
 
 //functions
@@ -45,7 +39,7 @@ function closeModal() {
 }
 function updateProfile() {
   try {
-    setUser(profileId.value, {
+    setUser(uid.value, {
       firstName: inputs.firstName,
       lastName: inputs.lastName,
       username: inputs.username,
@@ -53,9 +47,9 @@ function updateProfile() {
   } catch (error) {
     console.log("save unsuccessful");
   } finally {
-    profileFirstName.value = inputs.firstName;
-    profileLastName.value = inputs.lastName;
-    profileUserName.value = inputs.username;
+    firstName.value = inputs.firstName;
+    lastName.value = inputs.lastName;
+    userName.value = inputs.username;
     userStore.setInitials();
     modal.modalMessage = "Changes Saved";
     modal.modalActive = true;
@@ -75,7 +69,7 @@ function updateProfile() {
     <div class="container">
       <h2>Account Settings</h2>
       <div class="profile-info">
-        <div class="initials">{{ profileInitials }}</div>
+        <div class="initials">{{ initials }}</div>
         <div class="admin-badge">
           <img :src="adminIcon" class="icon" />
           <span>admin</span>

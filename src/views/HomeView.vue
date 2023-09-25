@@ -6,18 +6,21 @@ import { useVirtualList } from "@vueuse/core";
 import BlogPostCard from "../components/BlogPostCard.vue";
 import BlogCard from "../components/BlogCard.vue";
 import { arrowRight } from "../assets/Icons";
-import useBlogCard from "../stores/blogStore";
+import useBlogStore from "../stores/blogStore";
 import useUserStore from "../stores/userStore";
 import { storeToRefs } from "pinia";
+import { getDocs, collection } from "firebase/firestore";
+import { db, storage } from "../firebase/connection";
+import firebaseApp from "../firebase/firebaseInit";
+import { ref as sref, getBlob, getDownloadURL } from "firebase/storage";
 
 //props, general
 
-const blogCardStore = useBlogCard();
-const { blogCardState } = storeToRefs(blogCardStore);
-
+const blogStore = useBlogStore();
 const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
 
+const { isUser: user } = storeToRefs(userStore);
+const defaultBucketUri = "gs://omniblog-49459.appspot.com";
 //states
 const welcomeScreen = reactive({
   title: "Welcome",
@@ -30,6 +33,27 @@ const sampleBlogPost = reactive([
   bp_fillerBlog(undefined, undefined, "beautiful-stories"),
   bp_fillerBlog(undefined, undefined, "designed-for-everyone"),
 ]);
+
+//lifecycle
+onMounted(async () => {
+  blogStore.blogCardState = [];
+
+  const postSnapshot = await getDocs(collection(db, "posts"));
+  postSnapshot.forEach(async (doc) => {
+    const data = doc.data();
+    console.log(data);
+    const imageRef = sref(storage, `${defaultBucketUri}/${data.coverImageUri}`);
+    const url = await getDownloadURL(imageRef);
+    console.log(url);
+    const blogCard = {
+      title: data.title,
+      blogHTML: data.content,
+      blogData: data.date,
+      blogCoverPhoto: url,
+    };
+    blogStore.blogCardState.push(blogCard);
+  });
+});
 
 //functions
 
@@ -77,7 +101,7 @@ const { list, containerProps, wrapperProps } = useVirtualList(data, {
 
     <div class="individual-blog-card__marquee">
       <BlogCard
-        v-for="(content, index) in blogCardState"
+        v-for="(content, index) in blogStore.blogCardState"
         :key="index + 'individual'"
         :content="content"
       />

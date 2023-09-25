@@ -24,13 +24,8 @@ const emit = defineEmits(["logout", "routechange"]);
 const showProfile = ref(false);
 const modalRef = ref(null);
 const userStore = useUserStore();
-const {
-  profileUserName,
-  profileFirstName,
-  profileLastName,
-  profileEmail,
-  profileInitials,
-} = storeToRefs(userStore);
+const { userName, firstName, lastName, email, initials } =
+  storeToRefs(userStore);
 //lifecycle
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
@@ -75,21 +70,21 @@ function routeChange(instruction) {
       @click.stop="toggleProfile()"
     >
       <p :class="isMobile ? 'mobile-profile-initials' : 'profile-initials'">
-        {{ profileInitials }}
+        {{ initials }}
       </p>
     </div>
     <div v-show="showProfile" class="profile-modal-container" ref="modalRef">
       <div class="user-info">
         <div class="info-1">
-          <p>{{ profileFirstName + " " + profileLastName }}</p>
+          <p>{{ firstName + " " + lastName }}</p>
         </div>
 
         <div class="info-2">
-          <p>{{ "@" + profileUserName }}</p>
+          <p>{{ "@" + userName }}</p>
         </div>
 
         <div class="info-3">
-          <p>{{ profileEmail }}</p>
+          <p>{{ email }}</p>
         </div>
       </div>
 

@@ -1,14 +1,14 @@
 <script setup>
 //imports
 import { ref, reactive, watch, computed, onBeforeUnmount } from "vue";
-import useBlogCard from "../stores/blogStore";
+import useBlogStore from "../stores/blogStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 
 //states, props, general
 
 //pinia state management we must use toreToRefs to destruct the blogCardStore state
-const blogCardStore = useBlogCard();
+const blogCardStore = useBlogStore();
 const { blogCardState } = storeToRefs(blogCardStore);
 
 /* watch(editPost, (newv, oldv) => {

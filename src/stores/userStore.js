@@ -1,32 +1,27 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
+/*
 
+*/
 
-const useUserStore = defineStore('user',{
-   state : () => ({
-   
-      user : null,
-      profileEmail : null,
-      profileFirstName : null,
-      profileLastName : null,
-      profileUserName : null,
-      profileId : null,
-      profileInitials : null,
-   
-   }),
-   
-   getters : {
-            
-   }, 
-   
-   actions : {
-      
-      setInitials() {
-         this.profileInitials = this.profileFirstName.at(0) + this.profileLastName.at(0);
-      }
-   }
-   
-})
+const useUserStore = defineStore("user", {
+  state: () => ({
+    isUser: null,
+    email: null,
+    firstName: null,
+    lastName: null,
+    userName: null,
+    uid: null,
+    initials: null,
+  }),
 
+  getters: {},
+
+  actions: {
+    setInitials() {
+      this.initials = this.firstName.at(0) + this.lastName.at(0);
+    },
+  },
+});
 
 export default useUserStore;

@@ -3,7 +3,7 @@
 import { ref, reactive, toRef, computed } from "vue";
 
 import { arrowRight, edit, trash } from "@/assets/Icons";
-import useBlogCard from "../stores/blogStore";
+import useBlogStore from "../stores/blogStore";
 
 defineProps({
   //props
@@ -14,7 +14,7 @@ defineProps({
 });
 
 //states
-const cardStore = useBlogCard();
+const cardStore = useBlogStore();
 
 //lifecycle
 
@@ -37,10 +37,7 @@ const editPost = computed(() => cardStore.editPost);
         </div>
       </div>
 
-      <img
-        :src="`src/assets/blogCards/${content.blogCoverPhoto}.jpg`"
-        alt="blog-image"
-      />
+      <img :src="`${content.blogCoverPhoto}`" alt="blog-image" />
 
       <div class="content__information">
         <h4>{{ content.title }}</h4>

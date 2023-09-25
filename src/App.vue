@@ -59,13 +59,14 @@ function checkAuth() {
       try {
         userSnapshot.forEach((doc) => {
           const data = doc.data();
-          userStore.user = true;
-          userStore.profileId = data.uid;
-          userStore.profileFirstName = data.firstName;
-          userStore.profileLastName = data.lastName;
-          userStore.profileEmail = data.email;
-          userStore.profileUserName = data.username;
+          userStore.isUser = true;
+          userStore.uid = data.uid;
+          userStore.firstName = data.firstName;
+          userStore.lastName = data.lastName;
+          userStore.email = data.email;
+          userStore.username = data.username;
           userStore.setInitials();
+          console.log("wroking");
         });
       } catch (error) {
         console.log(error);
@@ -83,7 +84,7 @@ function checkAuth() {
 }
 
 async function logout() {
-  userStore.user = false;
+  userStore.isUser = false;
   navState.isUserLoggedIn = false;
   await signOut(auth);
 }
