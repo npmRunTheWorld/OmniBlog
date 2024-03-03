@@ -1,23 +1,25 @@
 <script setup>
 //imports
-import { ref, reactive, watch, computed, onBeforeUnmount } from "vue";
-import useBlogStore from "../stores/blogStore";
+import { ref, reactive, watch, computed, onBeforeUnmount, onMounted } from "vue";
+import { useBlogStore } from "../stores/blogStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
-
+import { useRoute } from "vue-router";
 //states, props, general
 
 //pinia state management we must use toreToRefs to destruct the blogCardStore state
 const blogCardStore = useBlogStore();
 const { blogCardState } = storeToRefs(blogCardStore);
 
-/* watch(editPost, (newv, oldv) => {
-  console.log("hi");
-}); */
+const router = useRoute();
 
 //lifecycle
 onBeforeUnmount(() => {
   blogCardStore.togglePost(false);
+});
+
+onMounted(() => {
+  
 });
 
 //functions
@@ -44,6 +46,7 @@ const editPost = computed({
         v-for="(content, index) in blogCardState"
         :key="index + 'individual'"
         :content="content"
+        :index="index"
       />
     </div>
   </div>

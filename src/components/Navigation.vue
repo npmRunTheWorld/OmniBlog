@@ -11,7 +11,6 @@ import {
 } from "vue";
 import { RouterLink } from "vue-router";
 
-import Loader from "./Loader.vue";
 import menuIcon from "../assets/Icons/bars-regular.svg";
 
 //states, props, general
@@ -96,7 +95,9 @@ function mobileRouteChangeEffect() {
 <template>
   <header class="header__container">
     <div class="header__logo-container">
-      <Loader />
+      <RouterLink to="/">
+        <img src="../assets/images/omniBlogLogo.png" width="40" height="30" />
+      </RouterLink>
       <h1>Omni Blog</h1>
     </div>
 
@@ -191,23 +192,31 @@ function mobileRouteChangeEffect() {
   padding: 1rem;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.295);
   width: 100%;
-  z-index: 0;
+  z-index: 100;
 }
 
 .header__logo-container {
   @include row-start;
   color: $secondary;
-  gap: 1.8rem;
-
+  gap: 1rem;
+  
+  
   &:first-child {
     margin-left: 1rem;
+  }
+  
+  h1{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.6rem;
+    padding-top: 0.3rem;
+    text-align: center;
   }
 }
 
 .header__navigation {
   @include row-end;
   width: 100%;
-
+  z-index: 100;
   nav ul {
     display: flex;
     justify-content: flex-end;

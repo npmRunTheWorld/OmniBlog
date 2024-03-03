@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 
 */
 
-const useUserStore = defineStore("user", {
+export const useUserStore = defineStore("user", {
   state: () => ({
     isUser: null,
     email: null,
@@ -24,4 +24,3 @@ const useUserStore = defineStore("user", {
   },
 });
 
-export default useUserStore;

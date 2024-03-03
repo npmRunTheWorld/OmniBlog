@@ -19,11 +19,19 @@ defineProps({
     type: Number,
     required: false,
   },
+  originalPostIndex :{
+    type: Number,
+    required: false,
+  
+  }
 });
 //states
 
 //lifecycle
-onMounted(() => {});
+onMounted(() => {
+  
+
+});
 //functions
 </script>
 
@@ -33,18 +41,27 @@ onMounted(() => {});
       <div>
         <section v-if="post.welcomeScreen" class="blog__hero-container">
           <div class="hero-container__title">
-            <h1>{{ post.title }}</h1>
-            <p>{{ post.blogPost }}</p>
+           <div class='title-container' >
+            <h1>{{ "Write to your hearts content" }}</h1>
 
-            <RouterLink :to="{ name: login }"
-              >Login Register <img :src="arrowRight" width="30" height="30"
+            <div class='link-container' >
+              <RouterLink :to="{ name: 'login' }"
+              >Login <img :src="arrowRight" width="10" height="10"
             /></RouterLink>
+
+            <RouterLink :to="{ name: 'register' }">
+              Register for Omni Blogs! <img :src="arrowRight" width="10" height="10"/>
+            </RouterLink>
+            </div>
+            
+           </div>
+           
           </div>
 
           <div class="hero-container__img">
             <img
               :src="`src/assets/blogPhotos/${post.photo}.jpg`"
-              :alt="post.photo"
+              :alt="post.blogCoverPhoto"
             />
           </div>
         </section>
@@ -59,12 +76,11 @@ onMounted(() => {});
         >
           <div class="regular-container__title">
             <h1>{{ post.title }}</h1>
-            <p>{{ post.blogHTML }}</p>
-            <RouterLink :to="{ name: posta }">View Post</RouterLink>
+            <RouterLink :to="{ name:'viewPost', params :{ uid: post.uid, index: originalPostIndex }}">View Post</RouterLink>s
           </div>
 
           <div class="regular-container__img">
-            <img :src="`src/assets/blogPhotos/${post.blogCoverPhoto}.jpg`" />
+            <img :src="`${post.blogCoverPhoto}`" />
           </div>
         </section>
       </div>
@@ -89,7 +105,8 @@ a {
 .blog__hero-container {
   min-width: 100%;
   width: 100%;
-  min-height: 30vh;
+  height: 100%;
+  min-height: 120vh;
   flex: 1;
   @include row-start;
   background-color: $background3;
@@ -104,32 +121,47 @@ a {
     margin-left: 15%;
     width: 85%;
     width: 50%;
-
+    height: 100%;
+    
+    .title-container{
+      display: flex;
+      flex-direction: column;
+      gap: 5rem;
+      margin-left: -20%;
+    }
     h1 {
       text-transform: uppercase;
     }
     p {
       text-overflow: ellipsis;
     }
-    a {
-      color: $primary;
-      img {
-        color: $text;
-        filter: invert(1);
-        transform: translate(0%, 25%);
-        width: 18px;
-        height: 18px;
-      }
-
-      &:hover {
-        color: $text2;
-        border-bottom: 1px solid $text2;
+    .link-container{
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0.5rem;
+      
+      justify-content: space-between;
+      a {
+        color: $primary;
+        img {
+          color: $text;
+          filter: invert(1);
+          transform: translate(0%, 0%);
+          width: 10px;
+          height: 10px;
+        }
+  
+        &:hover {
+          color: $text2;
+          border-bottom: 1px solid $text2;
+        }
       }
     }
   }
 
   .hero-container__img {
-    width: 50%;
+    width: 100%;
     height: 100%;
     display: flex;
     img {
@@ -142,15 +174,17 @@ a {
 }
 
 .blog__regular-container {
-  min-width: 100%;
   width: 100%;
+  min-width: 100vw;
   flex: 1;
-  min-height: 33vh;
+  min-height: 50vh;
+  height: 50vh;
+  
   @include row-start;
   flex-direction: row-reverse;
-  background-color: $background2-less;
+  background-color: rgb(95, 70, 37);
   border-width: 5px 0px 0;
-  border-color: black;
+  border-color: white;
   border-style: solid;
   gap: 3rem;
 
@@ -164,6 +198,7 @@ a {
       word-wrap: break-word;
       overflow-wrap: break-word;
       text-transform: uppercase;
+      color: $background2-less;
     }
     p {
       margin-left: 15%;
@@ -183,7 +218,9 @@ a {
       }
 
       &:hover {
-        color: $black;
+        color: $primary;
+        border-bottom: 1px solid $primary;
+        
       }
     }
   }
@@ -203,9 +240,11 @@ a {
   min-width: 100%;
   width: 100%;
   flex: 1;
-  min-height: 30vh;
+  min-height: 50vh;
+  height: 50vh;
+  
   @include row-start;
-  background-color: $background2;
+  background-color: rgb(16, 66, 66);
   color: $text;
   overflow: hidden;
   word-wrap: break-word;
@@ -220,12 +259,13 @@ a {
 
     h1 {
       text-transform: uppercase;
+      margin-right: 15%;
     }
     p {
       text-overflow: ellipsis;
     }
     a {
-      color: $accent;
+      color: rgb(27, 148, 148);
       img {
         color: $text;
         filter: invert(1);
@@ -235,7 +275,7 @@ a {
       }
 
       &:hover {
-        color: $text;
+        color: $primary;
         border-bottom: 1px solid $text;
       }
     }

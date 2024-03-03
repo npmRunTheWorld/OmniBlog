@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 import { ref as sref, uploadBytes } from "firebase/storage";
 
-import useUserStore from "../stores/userStore";
+import { useUserStore } from "../stores/userStore";
 // Attention:
 // customQuillModule means 'custom module name of Quill',
 // not a package's name called 'customQuillModule'.
@@ -32,11 +32,13 @@ const router = useRouter();
 //states
 const quillState = reactive({
   title: "",
+  categories: [],
   coverImage: "",
   content: "",
   file: null,
   _content: "",
   isError: false,
+  categoriesError: false,
 });
 //lifecycle
 onMounted(() => {});
@@ -71,7 +73,7 @@ async function submitPost() {
   }
   console.log(uniquePostId);
 
-  const uri = `blogCovers/${userStore.uid}/${uniquePostId}/${quillState.file.name}`;
+  const uri = `blogCovers/${userStore.uid}+${userStore.email}/${uniquePostId}+${quillState.title}/${quillState.file.name}`;
 
   const blogCoversRef = sref(storage, uri);
 
@@ -80,6 +82,11 @@ async function submitPost() {
       console.log("Uploaded a blob or file!");
     }
   );
+  //reason for using /\s+/ is to split the string by multiple spaces
+  // if we used " " it would only split by one space
+  const words = quillState.title.trim().split(/\s+/);
+  const wordStart = words[0];
+  const wordEnd = words[words.length - 1].replace(/\.$/, "");
 
   await addDoc(collection(db, "posts"), {
     postId: userStore.uid + "/" + uniquePostId,
@@ -90,15 +97,24 @@ async function submitPost() {
     content: quillState.content,
     firstName: userStore.firstName,
     lastName: userStore.lastName,
+    email: userStore.email,
     uid: userStore.uid,
     coverImageUri: uri,
+    letterStart: wordStart[0],
+    wordStart: wordStart,
+    wordEnd: wordEnd,
+    categories: quillState.categories,
   })
     .then((docRef) => {
       console.log("Document written with ID: ", docRef.id);
       userNameQuerySnap.forEach((doc) => {
         const posts = doc.data().posts;
-        posts.push(docRef.id);
-        setDoc(doc.ref, { posts: posts }, { merge: true });
+        posts.push(`${quillState.title}+${docRef.id}`);
+        setDoc(
+          `${quillState.title}+${docRef.id}`,
+          { posts: posts },
+          { merge: true }
+        );
       });
     })
     .catch((error) => {
@@ -134,6 +150,29 @@ function handleRemoveImage() {
 function handleQuillChange(event) {
   console.log(event.html);
 }
+
+const selectedCategories = ref([]);
+
+const updateCategories = () => {
+  // Assuming quillState is part of a larger state management or needs to be emitted
+  console.log(selectedCategories.value); // Replace with appropriate action, like updating a store or emitting an event
+  if (quillState.categories.length > 2) {
+    quillState.categoriesError = true;
+    return;
+  }
+
+  if (quillState.categories.includes(selectedCategories.value[0])) {
+    return;
+  }
+  quillState.categories.push(selectedCategories.value[0]);
+  quillState.categoriesError = false;
+};
+function removeCategory(category) {
+  quillState.categories = quillState.categories.filter(
+    (cat) => cat !== category
+  );
+  selectedCategories.value = [];
+}
 //
 </script>
 
@@ -142,6 +181,7 @@ function handleQuillChange(event) {
     <div class="title-wrapper">
       <input type="text" placeholder="Title: " v-model="quillState.title" />
     </div>
+
     <div class="image-drop-container">
       <div class="title-container">
         <p>Add a cover image</p>
@@ -171,6 +211,53 @@ function handleQuillChange(event) {
       v-model:value="quillState.content"
       tabindex=""
     />
+    <section class="categories-container">
+      <div class="categories-selection">
+        <div
+          v-for="(category, index) in quillState.categories"
+          :key="`quillCat-${category}-${
+            Math.random(10000) * index + index + 2
+          }`"
+        >
+          <div class="category-tag">
+            <p>{{ category }}</p>
+            <span class="cancel-category" @click="removeCategory(category)"
+              >x</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="categories-wrapper">
+        <h3>Please select up to 3 categories</h3>
+        <select
+          class=""
+          multiple
+          value=""
+          name="categories"
+          @change="updateCategories"
+          v-model="selectedCategories"
+        >
+          <option value="art">Art</option>
+          <option value="abstract">Abstract</option>
+          <option value="games">Games</option>
+          <option value="food">Food</option>
+          <option value="science">Science</option>
+          <option value="sliceOfLife">Slice Of Life</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="fashion">Fashion</option>
+          <option value="news">News</option>
+          <option value="beauty">Beauty</option>
+          <option value="lifestyle">Life Style</option>
+          <option value="fitness">Fitness</option>
+          <option value="photography">Photography</option>
+          <option value="education">Education</option>
+          <option value="business">Business</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </section>
+
     <div class="btn-container flex-end">
       <button @click="submitPost">Create Post</button>
     </div>
@@ -185,53 +272,29 @@ function handleQuillChange(event) {
 
 <style lang="scss" scoped>
 button {
-  background-color: rgb(10, 63, 45);
+  background-color: rgba(170, 163, 101, 0.199);
+  
   color: rgb(139, 113, 26);
   border: none;
   border-radius: 5px;
   padding: 0.5rem 1rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   font-family: monospace;
   transition: all 0.3s ease-in-out;
 
   &:hover {
-    background-color: rgb(139, 113, 26);
-    color: rgb(14, 88, 64);
-  }
-}
-
-.title-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-family: monospace;
-  & > input {
-    width: 100%;
-    height: 100%;
-    padding: 0.5rem 1rem;
-    border: 1px solid black;
-    border-radius: 5px;
-    font-size: 1.8rem;
-    font-weight: 600;
-    font-family: monospace;
-    background-color: $primary;
-    outline: none;
-
+    background-color: rgb(10, 76, 78);
     color: rgb(139, 113, 26);
-    &:hover {
-      border: 1px solid black;
-    }
+
   }
 }
 
 .image-drop-container {
   display: flex;
   flex-direction: column;
+  border: 1px solid black;
 
   .title-container {
     display: flex;
@@ -239,7 +302,7 @@ button {
     padding: 1rem;
 
     p {
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       color: #533d27;
       font-family: monospace;
     }
@@ -277,10 +340,138 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: $primary;
+  background-color: rgba(170, 163, 101, 0.199);
   padding: 3rem;
   margin-top: 10vh;
   gap: 1rem;
+
+  .title-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-family: monospace;
+    width: 100%;
+    & > input {
+      width: 100%;
+      height: 100%;
+      padding: 0.5rem 0.5rem;
+      border: 1px solid black;
+      font-size: 1.4rem;
+      font-weight: 600;
+      font-family: monospace;
+      background-color: rgba(170, 163, 101, 0.199);
+      outline: none;
+
+      color: rgb(139, 113, 26);
+      &:hover {
+        border: 1px solid black;
+      }
+    }
+  }
+  .categories-container {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+
+    .categories-selection {
+      display: flex;
+      border: 1px solid black;
+      width: 80%;
+      font-size: 1rem;
+      gap: 1rem;
+      padding: 1rem;
+      flex-wrap: wrap;
+      .category-tag {
+        background-color: #1d472b;
+        width: max-content;
+        min-width: 100px;
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem;
+        border-radius: 5px;
+        gap: 1rem;
+
+        p {
+          color: rgb(139, 113, 26);
+          font-size: 1rem;
+          font-weight: 600;
+          font-family: monospace;
+        }
+
+        span {
+          color: rgb(139, 113, 26);
+          font-size: 1rem;
+          font-weight: 600;
+          font-family: monospace;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .categories-wrapper {
+      width: 20%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      font-size: 0.8rem;
+      
+      ::-webkit-scrollbar-track {
+        background-color: rgba(
+          170,
+          163,
+          101,
+          0.199
+        ); /* Change this to the color you want for the scrollbar track */
+      }
+
+      /* Style the scrollbar thumb (the draggable part) */
+      ::-webkit-scrollbar-thumb {
+        background-color: rgb(88, 124, 112);
+        border-radius: 15px;
+        /* Change this to the color you want for the scrollbar thumb */
+      }
+
+      /* Style the scrollbar thumb on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #533d27; /* Change this to the color you want for the hovered scrollbar thumb */
+      }
+
+      ::-webkit-scrollbar {
+        width: 10px; /* Set the width of the scrollbar */
+      }
+      select {
+        width: 100%;
+        font-size: 1rem;
+        background-color: rgba(170, 163, 101, 0.199);
+        padding: 0.5rem 0.5rem;
+        border-radius: 5px;
+
+        option {
+          &:hover {
+            background-color: rgb(211, 197, 151);
+          }
+
+          &:active {
+            background-color: rgb(211, 197, 151);
+          }
+
+          &::selection {
+            background-color: rgb(211, 197, 151);
+          }
+          &.selected {
+            background-color: rgb(211, 197, 151);
+          }
+        }
+      }
+      select[multiple]:focus option:checked {
+        background: rgb(52, 85, 75)
+          linear-gradient(0deg, rgb(52, 85, 75) 0%, rgb(52, 85, 75) 100%);
+      }
+    }
+  }
 }
 
 :deep(.ql-toolbar) {
@@ -344,6 +535,7 @@ button {
   display: flex;
   flex-direction: column;
   height: 60vh;
+  background-color: rgba(170, 163, 101, 0.199);
 
   ::-webkit-scrollbar-track {
     background-color: $primary; /* Change this to the color you want for the scrollbar track */

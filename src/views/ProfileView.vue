@@ -3,7 +3,7 @@
 import { ref, reactive, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { adminIcon } from "../assets/Icons/index.js";
-import useUserStore from "../stores/userStore";
+import { useUserStore } from "../stores/userStore";
 import { setUser } from "../firebase/quries/getUser";
 
 //props, general
@@ -11,7 +11,7 @@ defineProps({});
 
 const userStore = useUserStore();
 const { initials, email, firstName, lastName, userName, uid } =
-  storeToRefs(userStore);
+  storeToRefs(userStore);sssssssss
 const inputs = reactive({
   firstName: "",
   lastName: "",

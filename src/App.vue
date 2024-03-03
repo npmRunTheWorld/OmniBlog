@@ -6,13 +6,13 @@ import Footer from "./components/Footer.vue";
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
 import firebaseApp from "./firebase/firebaseInit";
 import { getUser } from "./firebase/quries/getUser";
-import useUserStore from "./stores/userStore";
+import { useUserStore } from "./stores/userStore";
 
 //general
 const router = useRoute();
 
 //state
-const currentpath = ref(router.path);
+const currentPath = ref(router.path);
 const isPageLoad = ref(true);
 const navState = reactive({
   isNavOpen: null,
@@ -32,16 +32,16 @@ onBeforeMount(() => {
 });
 
 watchEffect(() => {
-  currentpath.value = router.path;
+  currentPath.value = router.path;
   checkRoute();
 });
 
 //functions
 function checkRoute() {
   if (
-    currentpath.value == "/login" ||
-    currentpath.value == "/register" ||
-    currentpath.value == "/forgot-password"
+    currentPath.value == "/login" ||
+    currentPath.value == "/register" ||
+    currentPath.value == "/forgot-password"
   ) {
     navState.isNavOpen = false;
   } else {
@@ -66,7 +66,7 @@ function checkAuth() {
           userStore.email = data.email;
           userStore.username = data.username;
           userStore.setInitials();
-          console.log("wroking");
+          console.log("working");
         });
       } catch (error) {
         console.log(error);
@@ -86,7 +86,9 @@ function checkAuth() {
 async function logout() {
   userStore.isUser = false;
   navState.isUserLoggedIn = false;
+  localStorage.removeItem("userLoggedIn");
   await signOut(auth);
+  router.push({ name: "home" });
 }
 
 //

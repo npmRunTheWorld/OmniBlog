@@ -8,7 +8,7 @@
 
 <template>
   <div class="loader__container">
-    <div class="spinner" v-custom="'green'">
+    <div class="spinner" v-custom="'rgba(0,0,0)'">
       <div></div>
       <div></div>
       <div></div>
@@ -20,56 +20,65 @@
 </template>
 
 <style lang="scss" scoped>
+.loader__container{
+  display: flex;
+  z-index: 100000;
+}
 .spinner {
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   animation: spinner-y0fdc1 5s infinite ease;
   transform-style: preserve-3d;
 }
 
 .spinner > div {
-  background-color: $secondary;
   height: 100%;
   position: absolute;
   width: 100%;
-  border: 2px solid $primary;
+  border: 1px solid $secondary;
+  background: linear-gradient(90deg, rgb(68, 85, 36), rgb(14, 66, 59));
+  width: 35px;
+  height: 35px;
+  
 }
 
 .spinner div:nth-of-type(1) {
-  transform: translateZ(-22px) rotateY(180deg);
+  transform: translateZ(-14px) rotateY(180deg);
 }
 
 .spinner div:nth-of-type(2) {
-  transform: rotateY(-270deg) translateX(50%);
+  transform: rotateY(-270deg) translateX(40%);
   transform-origin: top right;
 }
 
 .spinner div:nth-of-type(3) {
-  transform: rotateY(270deg) translateX(-50%);
+  transform: rotateY(270deg) translateX(-40%);
   transform-origin: center left;
 }
 
 .spinner div:nth-of-type(4) {
-  transform: rotateX(90deg) translateY(-50%);
+  transform: rotateX(90deg) translateY(-40%);
   transform-origin: top center;
 }
 
 .spinner div:nth-of-type(5) {
-  transform: rotateX(-90deg) translateY(50%);
+  transform: rotateX(-90deg) translateY(40%);
   transform-origin: bottom center;
+  
 }
 
 .spinner div:nth-of-type(6) {
-  transform: translateZ(22px);
+  transform: translateZ(21px);
 }
 
 @keyframes spinner-y0fdc1 {
   0% {
     transform: rotateZ(0) rotateX(-25deg) rotateY(25deg);
+    
   }
 
   50% {
-    transform: rotateZ(0) rotateX(-385deg) rotateY(25deg);
+    transform: rotateZ(50deg) rotateX(-385deg) rotateY(25deg);
   }
 
   100% {

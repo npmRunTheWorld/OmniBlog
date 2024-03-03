@@ -2,7 +2,7 @@
 //imports
 import { ref, reactive, onMounted, onUnmounted } from "vue";
 import { RouterLink } from "vue-router";
-import useUserStore from "../stores/userStore";
+import { useUserStore } from "../stores/userStore";
 import { storeToRefs } from "pinia";
 import userIcon from "../assets/Icons/user-alt-light.svg";
 import adminIcon from "../assets/Icons/user-crown-light.svg";
@@ -58,6 +58,23 @@ function routeChange(instruction) {
 
   showProfile.value = false;
 }
+const getName = computed(() => {
+  let fullName = "";
+  if(firstName.value != null){
+    fullName += firstName.value + " "
+  }
+  
+  if(lastName.value != null){
+    fullName += lastName.value
+  }
+  
+  if(fullName == ""){
+    return ""
+  }
+  
+  return fullName;
+
+})
 //
 </script>
 
@@ -76,10 +93,11 @@ function routeChange(instruction) {
     <div v-show="showProfile" class="profile-modal-container" ref="modalRef">
       <div class="user-info">
         <div class="info-1">
-          <p>{{ firstName + " " + lastName }}</p>
+          <p v-if="getName != ''">{{ getName }}</p>
+          <RouterLink v-else :to="{ name: 'login' }">Please Login</RouterLink>
         </div>
 
-        <div class="info-2">
+        <div class="info-2" v-if="userName != null">
           <p>{{ "@" + userName }}</p>
         </div>
 

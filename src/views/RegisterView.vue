@@ -296,9 +296,9 @@ async function register() {
     .angle {
       display: none;
       position: absolute;
-      background-color: $secondary;
+      background-color: $background2-less;
       transform: rotateZ(3deg);
-      width: 60px;
+      width: 65px;
       right: -38px;
       height: 101%;
 
@@ -323,7 +323,8 @@ async function register() {
     display: none;
     flex: 2;
     background-size: cover;
-    background-image: url("../assets/background.png");
+    background-image: url("../assets/images/forestPaintRegister.jpg");
+    background-position: (bottom, center);
     width: 100%;
     height: 100%;
 

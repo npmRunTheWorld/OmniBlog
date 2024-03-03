@@ -5,6 +5,7 @@ import { RouterLink, useRouter } from "vue-router";
 import { email, password } from "@/assets/icons";
 import firebaseApp from "../firebase/firebaseInit";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
+import { useLoadStore } from "../stores/loadStore";
 
 defineProps({
   //props
@@ -12,7 +13,7 @@ defineProps({
 
 //general
 const router = useRouter();
-
+const loadStore = useLoadStore();
 //states
 const form = reactive({
   email: "",
@@ -51,6 +52,8 @@ function login() {
       form.errorMsg = "";
       form.isError = false;
       form.isLoading = false;
+      loadStore.isGloballyLoading = true;
+      localStorage.setItem('userLoggedIn', 'true');
       router.push({ name: "home" });
     })
     .catch((error) => {
@@ -99,7 +102,7 @@ function login() {
         <div class="error-container">
           <div class="error" v-show="form.isError">{{ form.errorMsg }}</div>
         </div>
-
+        
         <RouterLink :to="{ name: 'forgotpassword' }" class="forgot-password"
           >Forgot your password?</RouterLink
         >
@@ -218,9 +221,9 @@ function login() {
     .angle {
       display: none;
       position: absolute;
-      background-color: $primary;
       transform: rotateZ(3deg);
-      width: 60px;
+      background-color: $background2-less;
+      width: 65px;
       right: -38px;
       height: 101%;
 
@@ -234,9 +237,11 @@ function login() {
     display: none;
     flex: 2;
     background-size: cover;
-    background-image: url("../assets/background.png");
+    background-image: url("../assets/images/forestPaint.jpg");
     width: 100%;
     height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 
     @media screen and (min-width: 900px) {
       display: initial;
