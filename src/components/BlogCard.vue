@@ -18,7 +18,7 @@ defineProps({
 });
 
 //states
-const cardStore = useBlogStore();
+const blogStore = useBlogStore();
 const hover = ref(false);
 //lifecycle
 
@@ -41,11 +41,11 @@ function editPost() {
 
       <div class="icons">
         <div class="icon">
-          <img :src="edit" :width="30" class="edit" v-show="editPost" @click="editPost"/>
+          <img :src="edit" :width="30" class="edit" v-if="blogStore.editPost" @click="editPost"/>
         </div>
 
         <div class="icon">
-          <img :src="trash" :width="24" class="trash" v-show="editPost" @click="deletePost" />
+          <img :src="trash" :width="24" class="trash" v-if="blogStore.editPost" @click="deletePost" />
         </div>
       </div>
 
@@ -87,13 +87,21 @@ function editPost() {
     align-items: flex-end;
     justify-content: flex-end;
     transition: none;
-    color: white;
+    
     
     img {
       width: 16px;
       height: 16px;
       cursor: pointer;
       filter: invert(0.65);
+
+    }
+    
+    .icon{
+      &:hover{
+        scale: 1.1;
+        filter: invert(1);
+      }
     }
   }
 

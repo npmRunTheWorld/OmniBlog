@@ -7,38 +7,42 @@ import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 //states, props, general
 
-//pinia state management we must use toreToRefs to destruct the blogCardStore state
-const blogCardStore = useBlogStore();
-const { blogCardState } = storeToRefs(blogCardStore);
+//pinia state management we must use toreToRefs to destruct the blogStore state
+const blogStore = useBlogStore();
+const { blogCardState } = storeToRefs(blogStore);
 
 const router = useRoute();
 
 //lifecycle
 onBeforeUnmount(() => {
-  blogCardStore.togglePost(false);
+  blogStore.togglePost(false);
 });
 
 onMounted(() => {
-  
+  blogStore.editPost = false;
 });
 
 //functions
-const editPost = computed({
+/* const editPost = computed({
   //persome computation
   get() {
-    return blogCardStore.editPost;
+    return blogStore.editPost;
   },
   set(payload) {
-    blogCardStore.togglePost(payload);
+    blogStore.togglePost(payload);
   },
-});
+}); */
+
+
+
+
 </script>
 
 <template>
   <div class="container">
     <div class="toggle-edit__container">
       <h3>Edit Post</h3>
-      <input type="checkbox" v-model="editPost" />
+      <input type="checkbox" v-model="blogStore.editPost" />
     </div>
 
     <div class="individual-blog-card__marquee">
