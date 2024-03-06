@@ -96,12 +96,12 @@ onMounted(async () => {
     
     <div class='main-content-view' v-if="user" >
       <BlogPostCard
-      v-for="(post, index) in blogStore.featureCard"
-      :key="index + 'hero'"
-      :post="post"
-      :index="index"
-      :originalPostIndex="blogStore.blogCardState.findIndex((blog) => blog.postId === post.postId)"
-    />
+        v-for="(post, index) in blogStore.featureCard"
+        :key="index + 'hero'"
+        :post="post"
+        :index="index"
+        :originalPostIndex="blogStore.blogCardState.findIndex((blog) => blog.postId === post.postId)"
+      />
 
     <div class="individual-blog-card__marquee">
       <BlogCard

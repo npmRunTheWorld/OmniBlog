@@ -208,7 +208,7 @@ function removeCategory(category) {
 
     <quill-editor
       class="quill-editor"
-      v-model:value="quillState.content"
+      v-model="quillState.content"
       tabindex=""
     />
     <section class="categories-container">

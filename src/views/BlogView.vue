@@ -5,6 +5,7 @@ import { useBlogStore } from "../stores/blogStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
+import { doc, deleteDoc } from "firebase/firestore";
 //states, props, general
 
 //pinia state management we must use toreToRefs to destruct the blogStore state

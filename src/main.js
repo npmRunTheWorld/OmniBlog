@@ -9,8 +9,6 @@ import router from "./router";
 import firebaseApp from "./firebase/firebaseInit";
 import { quillEditor } from "vue3-quill";
 
-import VueSweetalert2 from "vue-sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 let app;
@@ -21,7 +19,6 @@ const initializeApp = () => {
   const pinia = createPinia();
   pinia.use(piniaPluginPersistedState);
   app.use(pinia);
-  app.use(VueSweetalert2);
   app.use(router);
   app.directive("custom", customDirective);
   app.mount("#app");

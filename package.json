@@ -17,11 +17,11 @@
     "pinia-plugin-persistedstate": "^3.2.1",
     "quill-image-resize-module": "^3.0.0",
     "sass": "^1.62.1",
+    "sweetalert2": "^11.10.6",
     "uuid": "^9.0.0",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0",
     "vue-svg-loader": "^0.16.0",
-    "vue-sweetalert2": "^5.0.5",
     "vue3-quill": "^0.3.0"
   },
   "devDependencies": {

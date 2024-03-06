@@ -3,7 +3,12 @@
 import { ref, reactive, toRef, computed } from "vue";
 
 import { arrowRight, edit, trash } from "@/assets/Icons";
+import { useModalStore } from "../stores/modalStore";
 import { useBlogStore } from "../stores/blogStore";
+import { doc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref as sRef, deleteObject } from "firebase/storage";
+
+const modalStore = useModalStore();
 
 defineProps({
   //props
@@ -16,7 +21,7 @@ defineProps({
     required: true
   }
 });
-
+//boner overlord
 //states
 const blogStore = useBlogStore();
 const hover = ref(false);
@@ -25,10 +30,13 @@ const hover = ref(false);
 //functions
 function deletePost() {
   console.log('delete post')
+  const storage = getStorage();
+  modalStore.displayModal();
+  
 }  
 
 function editPost() {
-  console.log('edit post')
+  
 }
 
 
