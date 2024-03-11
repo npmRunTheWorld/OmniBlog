@@ -2,68 +2,128 @@
 //imports
 import { ref, reactive, toRef, computed } from "vue";
 
-import { arrowRight, edit, trash } from "@/assets/Icons";
+import { arrowRight, edit, trash } from "@/assets/icons";
 import { useModalStore } from "../stores/modalStore";
 import { useBlogStore } from "../stores/blogStore";
-import { doc, deleteDoc } from "firebase/firestore";
-import { getStorage, ref as sRef, deleteObject } from "firebase/storage";
+import { doc, collection, deleteDoc } from "firebase/firestore";
+import { getStorage, ref as storageRef, deleteObject } from "firebase/storage";
+import { db, storage } from "../firebase/connection";
 
 const modalStore = useModalStore();
 
-defineProps({
+const props = defineProps({
   //props
   content: {
     type: Object,
     required: true,
   },
-  index :{
+  index: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
+
+defineEmits(["open-modal"]);
+
+const { content, index } = toRefs(props);
+
 //boner overlord
 //states
 const blogStore = useBlogStore();
 const hover = ref(false);
+const showAdditionalDetails = ref(false);
+const defaultBucketUri = import.meta.env.VITE_APP_STORAGE_ROOT;
 //lifecycle
 
 //functions
 function deletePost() {
-  console.log('delete post')
-  const storage = getStorage();
-  modalStore.displayModal();
-  
-}  
+  console.log("delete post", content.value);
+  modalStore.displayModal({
+    title: "Are you sure?",
+    text: "this will delete your post forever",
+    showCancelButton: true,
+    onOk: async () => {
+      const storage = getStorage();
 
-function editPost() {
-  
+      //delete all files that are stored in this path
+
+      //the image path in URL form contains %
+      const imagePathInUrlForm = content.value.blogCoverPhotoUrl;
+      console.log(imagePathInUrlForm);
+      const blogPhotoRef = storageRef(storage, imagePathInUrlForm);
+
+      if (imagePathInUrlForm !== "" && imagePathInUrlForm) {
+        deleteObject(blogPhotoRef)
+          .then((res) => {
+            console.log("Images deleted successfully");
+          })
+          .catch((err) => {
+            console.log("Images failed to delete");
+          });
+      }
+
+      // Delete the file
+
+      deleteDoc(doc(db, "posts", content.value.docId))
+        .then(() => {
+          console.log("Document successfully deleted!");
+          blogStore.blogCardState.splice(index.value, 1);
+        })
+        .catch((error) => {
+          console.error("Error removing document: ", error);
+        });
+    },
+  });
 }
 
-
+function editPost() {}
 </script>
 
 <template>
-  <div class="container">
-    <div class="card__container" @mouseenter="hover = true" @mouseleave="hover = false">
+  <div class="card-container">
+    <div
+      class="card__container"
+      @mouseenter="hover = true"
+      @mouseleave="hover = false"
+      @click="console.log(content)"
+    >
       <div class="card__container-background"></div>
 
-      <div class="icons">
+      <div class="icons-box">
         <div class="icon">
-          <img :src="edit" :width="30" class="edit" v-if="blogStore.editPost" @click="editPost"/>
+          <img
+            :src="edit"
+            :width="30"
+            class="edit"
+            v-if="blogStore.editPost"
+            @click="editPost"
+          />
         </div>
 
         <div class="icon">
-          <img :src="trash" :width="24" class="trash" v-if="blogStore.editPost" @click="deletePost" />
+          <img
+            :src="trash"
+            :width="24"
+            class="trash"
+            v-if="blogStore.editPost"
+            @click="deletePost"
+          />
         </div>
       </div>
-
-      <img :src="`${content.blogCoverPhoto}`" alt="blog-image" />
-
+      <img
+        :src="`${content.blogCoverPhotoUrl}`"
+        alt="blog-image"
+        class="cover-photo"
+        @click.prevent="$emit('open-modal', content, index)"
+      />
+      <div></div>
       <div class="content__information" :class="hover ? 'hover-effect' : ''">
         <h4>{{ content.title }}</h4>
         <h6>Posted on: {{ content.blogData }}</h6>
       </div>
-      <RouterLink :to="{ name: 'viewPost' , params : { uid : content?.uid, index : index}}">
+      <RouterLink
+        :to="{ name: 'viewPost', params: { uid: content?.uid, index: index } }"
+      >
         View The Post <img :src="arrowRight" :width="18" />
       </RouterLink>
     </div>
@@ -71,12 +131,12 @@ function editPost() {
 </template>
 
 <style lang="scss" scoped>
-.container {
+.card-container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .card__container {
@@ -87,26 +147,26 @@ function editPost() {
   padding: 1rem;
   position: relative;
   gap: 1rem;
-  color: $background2-less;
-  .icons {
+  color: $black;
+  height: 100%;
+  .icons-box {
     display: flex;
     gap: 1rem;
     width: 100%;
     align-items: flex-end;
     justify-content: flex-end;
     transition: none;
-    
-    
+    height: 50px;
+
     img {
       width: 16px;
       height: 16px;
       cursor: pointer;
       filter: invert(0.65);
-
     }
-    
-    .icon{
-      &:hover{
+
+    .icon {
+      &:hover {
         scale: 1.1;
         filter: invert(1);
       }
@@ -121,7 +181,8 @@ function editPost() {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgb(34, 34, 34);
+    background-color: rgb(209, 207, 199);
+
     border-radius: 5px;
     z-index: 0;
   }
@@ -134,19 +195,33 @@ function editPost() {
       0 2px 4px -1px rgba(0, 0, 0, 0.6);
     color: black;
     a {
-      color: $accent;
+      color: $primary;
     }
   }
 
   .content__information {
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: 100%;
     gap: 1rem;
   }
 
+  .cover-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      filter: brightness(0.8);
+    }
+  }
   a {
-    color: $primary;
     margin-top: auto;
+    color: $accent;
+
     img {
       margin-left: 0.3rem;
       transform: translateY(25%);
@@ -158,12 +233,13 @@ function editPost() {
   }
 
   &:hover .card__container-background {
-    background-color: rgb(209, 207, 199);
-    color: black;
+    background-color: rgb(34, 34, 34);
+
+    color: $background2-less;
   }
 }
 
-.hover-effect{
-  color: black;
+.hover-effect {
+  color: $background2-less;
 }
 </style>

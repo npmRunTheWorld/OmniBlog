@@ -19,19 +19,15 @@ defineProps({
     type: Number,
     required: false,
   },
-  originalPostIndex :{
+  originalPostIndex: {
     type: Number,
     required: false,
-  
-  }
+  },
 });
 //states
 
 //lifecycle
-onMounted(() => {
-  
-
-});
+onMounted(() => {});
 //functions
 </script>
 
@@ -41,27 +37,26 @@ onMounted(() => {
       <div>
         <section v-if="post.welcomeScreen" class="blog__hero-container">
           <div class="hero-container__title">
-           <div class='title-container' >
-            <h1>{{ "Write to your hearts content" }}</h1>
+            <div class="title-container">
+              <h1>{{ "Write to your hearts content" }}</h1>
 
-            <div class='link-container' >
-              <RouterLink :to="{ name: 'login' }"
-              >Login <img :src="arrowRight" width="10" height="10"
-            /></RouterLink>
+              <div class="link-container">
+                <RouterLink :to="{ name: 'login' }"
+                  >Login <img :src="arrowRight" width="10" height="10"
+                /></RouterLink>
 
-            <RouterLink :to="{ name: 'register' }">
-              Register for Omni Blogs! <img :src="arrowRight" width="10" height="10"/>
-            </RouterLink>
+                <RouterLink :to="{ name: 'register' }">
+                  Register for Omni Blogs!
+                  <img :src="arrowRight" width="10" height="10" />
+                </RouterLink>
+              </div>
             </div>
-            
-           </div>
-           
           </div>
 
           <div class="hero-container__img">
             <img
               :src="`src/assets/blogPhotos/${post.photo}.jpg`"
-              :alt="post.blogCoverPhoto"
+              :alt="post.blogCoverPhotoUrl"
             />
           </div>
         </section>
@@ -76,11 +71,17 @@ onMounted(() => {
         >
           <div class="regular-container__title">
             <h1>{{ post.title }}</h1>
-            <RouterLink :to="{ name:'viewPost', params :{ uid: post.uid, index: originalPostIndex }}">View Post</RouterLink>s
+            <RouterLink
+              :to="{
+                name: 'viewPost',
+                params: { uid: post.uid, index: originalPostIndex },
+              }"
+              >View Post</RouterLink
+            >
           </div>
 
           <div class="regular-container__img">
-            <img :src="`${post.blogCoverPhoto}`" />
+            <img :src="`${post.blogCoverPhotoUrl}`" />
           </div>
         </section>
       </div>
@@ -122,8 +123,8 @@ a {
     width: 85%;
     width: 50%;
     height: 100%;
-    
-    .title-container{
+
+    .title-container {
       display: flex;
       flex-direction: column;
       gap: 5rem;
@@ -135,12 +136,12 @@ a {
     p {
       text-overflow: ellipsis;
     }
-    .link-container{
+    .link-container {
       display: flex;
       flex-direction: column;
       width: 100%;
       gap: 0.5rem;
-      
+
       justify-content: space-between;
       a {
         color: $primary;
@@ -151,7 +152,7 @@ a {
           width: 10px;
           height: 10px;
         }
-  
+
         &:hover {
           color: $text2;
           border-bottom: 1px solid $text2;
@@ -179,7 +180,7 @@ a {
   flex: 1;
   min-height: 50vh;
   height: 50vh;
-  
+
   @include row-start;
   flex-direction: row-reverse;
   background-color: rgb(95, 70, 37);
@@ -220,7 +221,6 @@ a {
       &:hover {
         color: $primary;
         border-bottom: 1px solid $primary;
-        
       }
     }
   }
@@ -242,7 +242,7 @@ a {
   flex: 1;
   min-height: 50vh;
   height: 50vh;
-  
+
   @include row-start;
   background-color: rgb(16, 66, 66);
   color: $text;

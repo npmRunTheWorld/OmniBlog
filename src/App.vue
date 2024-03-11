@@ -176,8 +176,6 @@ button {
 
 .individual-blog-card__marquee {
   margin: 6rem 0;
-  min-height: 50vh;
-  max-height: 100%;
   gap: 3rem;
   display: grid;
   grid-template-columns: 1fr;

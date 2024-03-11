@@ -1,6 +1,6 @@
 <script setup>
 //imports
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { quillEditor, Quill } from "vue3-quill";
 import { db, storage } from "../firebase/connection";
@@ -13,9 +13,10 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { ref as sref, uploadBytes } from "firebase/storage";
+import { ref as storageRef, uploadBytes } from "firebase/storage";
 
 import { useUserStore } from "../stores/userStore";
+import { useModalStore } from "../stores/modalStore";
 // Attention:
 // customQuillModule means 'custom module name of Quill',
 // not a package's name called 'customQuillModule'.
@@ -28,6 +29,7 @@ import { useUserStore } from "../stores/userStore";
 defineProps({});
 
 const userStore = useUserStore();
+const modalStore = useModalStore();
 const router = useRouter();
 //states
 const quillState = reactive({
@@ -41,16 +43,57 @@ const quillState = reactive({
   categoriesError: false,
 });
 //lifecycle
-onMounted(() => {});
+onMounted(() => {
+  if (!userStore.email) {
+    modalStore.displayModal({
+      icon: "error",
+      title: "User Authentication Failed!",
+      text: "Please log back in again before trying to submit!",
+      onOk: () => {
+        router.push({ name: "login" });
+      },
+    });
+  }
+});
 
 //functions
 async function submitPost() {
+  if (!userStore.email) {
+    modalStore.displayModal({
+      icon: "error",
+      title: "User Authentication Failed!",
+      text: "Please log back in again before trying to submit!" + missingFields,
+      onOk: () => {
+        router.push({ name: "login" });
+      },
+    });
+    return;
+  }
+
   if (
     quillState.title === "" ||
     quillState.content === "" ||
     quillState.coverImage === ""
   ) {
-    quillState.isError = true;
+    console.log("empty form", quillState);
+
+    let missingFields = "";
+    if (!quillState.title) {
+      missingFields += " Title,";
+    }
+    if (!quillState.content) {
+      missingFields += " Content,";
+    }
+    if (!quillState.coverImage) {
+      missingFields += " Cover Image,";
+    }
+
+    missingFields = missingFields.slice(0, -1) + ".";
+
+    modalStore.displayModal({
+      title: "Empty Form",
+      text: "Please fill out the following fields: " + missingFields,
+    });
     return;
   }
 
@@ -75,7 +118,7 @@ async function submitPost() {
 
   const uri = `blogCovers/${userStore.uid}+${userStore.email}/${uniquePostId}+${quillState.title}/${quillState.file.name}`;
 
-  const blogCoversRef = sref(storage, uri);
+  const blogCoversRef = storageRef(storage, uri);
 
   await uploadBytes(blogCoversRef, quillState.file, quillState.file.type).then(
     (snapshot) => {
@@ -121,7 +164,8 @@ async function submitPost() {
       console.error("Error adding document: ", error);
     })
     .finally(() => {
-      router.push({ name: "blog" });
+      console.log("Success moving to blog");
+      router.push({ name: "home" });
     });
 }
 
@@ -173,6 +217,7 @@ function removeCategory(category) {
   );
   selectedCategories.value = [];
 }
+
 //
 </script>
 
@@ -208,7 +253,7 @@ function removeCategory(category) {
 
     <quill-editor
       class="quill-editor"
-      v-model="quillState.content"
+      v-model:value="quillState.content"
       tabindex=""
     />
     <section class="categories-container">
@@ -261,19 +306,13 @@ function removeCategory(category) {
     <div class="btn-container flex-end">
       <button @click="submitPost">Create Post</button>
     </div>
-
-    <Modal
-      modalMessage="Please fill up the entire form!"
-      v-show="quillState.isError"
-      @closeModal="closeEmptyForm"
-    />
   </div>
 </template>
 
 <style lang="scss" scoped>
 button {
   background-color: rgba(170, 163, 101, 0.199);
-  
+
   color: rgb(139, 113, 26);
   border: none;
   border-radius: 5px;
@@ -287,7 +326,6 @@ button {
   &:hover {
     background-color: rgb(10, 76, 78);
     color: rgb(139, 113, 26);
-
   }
 }
 
@@ -417,7 +455,7 @@ button {
       flex-direction: column;
       gap: 1rem;
       font-size: 0.8rem;
-      
+
       ::-webkit-scrollbar-track {
         background-color: rgba(
           170,

@@ -19,7 +19,7 @@ import { ref as storageRef, getDownloadURL } from "firebase/storage";
 const blogStore = useBlogStore();
 const userStore = useUserStore();
 const { isUser: user } = storeToRefs(userStore);
-const defaultBucketUri = "gs://omniblog-49459.appspot.com";
+const defaultBucketUri = import.meta.env.VITE_APP_STORAGE_ROOT;
 //states
 const welcomeScreen = reactive({
   title: "Welcome",
@@ -28,98 +28,124 @@ const welcomeScreen = reactive({
   photo: "beautealfly",
 });
 
-
 //lifecycle
 onMounted(async () => {
-
-  if(!user.value){
-    blogStore.blogCardState = []
-    blogStore.featureCard = []
-
+  if (!user.value) {
+    blogStore.blogCardState = [];
+    blogStore.featureCard = [];
   }
 
-  blogStore.blogCardState = [];
+  try {
+    blogStore.blogCardState = [];
 
-  const postSnapshot = await getDocs(collection(db, "posts"));
-  const blogCardPromises = postSnapshot.docs.map(async (doc) => {
-    const data = doc.data();
-    const imageRef = storageRef(storage, `${defaultBucketUri}/${data.coverImageUri}`);
-    const url = await getDownloadURL(imageRef);
-    
-    return {
-      title: data.title,
-      blogHTML: data.content,
-      blogData: data.date,
-      blogCoverPhoto: url,
-      postId: data.postId, ...data
-    };
-  });
+    const postSnapshot = await getDocs(collection(db, "posts"));
+    const blogCardPromises = postSnapshot.docs.map(async (doc) => {
+      const data = doc.data();
+      console.log(doc.data());
 
-  // Wait for all blog cards to be fetched and URLs resolved
-  blogStore.blogCardState = await Promise.all(blogCardPromises);
+      const imageRef = storageRef(
+        storage,
+        `${defaultBucketUri}/${data.coverImageUri}`
+      );
 
-  // Now blogStore.blogCardState is fully populated and can be used
-  console.log(blogStore.blogCardState);
-  
+      //we try to get the URL of the image
+      const url = await getDownloadURL(imageRef)
+        .then((url) => {
+          //returns the URL upon success
+          return url;
+        })
+        .catch((error) => {
+          //If for some reason this file is not in the server through manual deletion or some other reason, handles an error and the url ?? ""
 
-  const featureShot = await getDocs(collection(db, "features"));
-   blogStore.featureCard = featureShot.docs.map((doc) => {
-    const data = doc.data();
-    console.log(data);
-    
-    const featureCard = blogStore.blogCardState.find((blog) => {
-      return blog.postId === data.postId;
+          console.log(error);
+        });
+
+      return {
+        title: data.title,
+        blogHTML: data.content,
+        blogData: data.date,
+        blogCoverPhotoUrl: url ?? "",
+        postId: data.postId,
+        docId: doc.id,
+        ...data,
+      };
     });
-    
-    console.log(featureCard);
-    if(featureCard){
-      return featureCard;
-    }
-  });
-  
-  
-  
+
+    // Wait for all blog cards to be fetched and URLs resolved
+    blogStore.blogCardState = await Promise.all(blogCardPromises);
+
+    // Now blogStore.blogCardState is fully populated and can be used
+    console.log(blogStore.blogCardState);
+
+    const featureShot = await getDocs(collection(db, "features"));
+    blogStore.featureCard = featureShot.docs.map((doc) => {
+      const data = doc.data();
+      console.log(data);
+
+      const featureCard = blogStore.blogCardState.find((blog) => {
+        return blog.postId === data.postId;
+      });
+
+      console.log(featureCard);
+      if (featureCard) {
+        return featureCard;
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
+const selectedBlog = ref({});
+const isShowingAdditionalDetails = ref(false);
+function handleAdditionalDetails(content, index) {
+  const blog = { ...content, index };
+  selectedBlog.value = blog;
+  isShowingAdditionalDetails.value = true;
+}
 //functions
-
-
-
 </script>
 
 <template>
   <div class="home-container">
-    
-    <div class='main-content-view' v-if="!user" >
+    <div class="main-content-view" v-if="!user">
       <BlogPostCard :post="welcomeScreen" />
     </div>
-    
-    <div class='main-content-view' v-if="user" >
+
+    <div class="main-content-view" v-if="user">
       <BlogPostCard
         v-for="(post, index) in blogStore.featureCard"
         :key="index + 'hero'"
         :post="post"
         :index="index"
-        :originalPostIndex="blogStore.blogCardState.findIndex((blog) => blog.postId === post.postId)"
+        :originalPostIndex="
+          blogStore.blogCardState.findIndex(
+            (blog) => blog.postId === post.postId
+          )
+        "
       />
 
-    <div class="individual-blog-card__marquee">
-      <BlogCard
-        v-for="(content, index) in blogStore.blogCardState"
-        :key="index + 'individual'"
-        :content="content"
-        :index="index"
-      />
-    </div>
-    </div>
-    
+      <div class="individual-blog-card__marquee">
+        <BlogCard
+          v-for="(content, index) in blogStore.blogCardState"
+          :key="index + 'individual'"
+          :content="content"
+          :index="index"
+          @open-modal="handleAdditionalDetails"
+        />
 
-    
+        <additional-details
+          :blog-object="selectedBlog"
+          v-if="isShowingAdditionalDetails"
+          @closed="isShowingAdditionalDetails = false"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.home-container{
+.home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,15 +154,15 @@ onMounted(async () => {
   z-index: 1;
   width: 100%;
   height: 100%;
-  .screen-loader{
+  .screen-loader {
     position: fixed;
     top: 0;
     left: 0;
     background-color: black;
     width: 100%;
     height: 100%;
-    
-    .screen-loader-container{
+
+    .screen-loader-container {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -145,27 +171,23 @@ onMounted(async () => {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      
-      .load-text{
+
+      .load-text {
         color: rgb(163, 152, 152);
         font-weight: bold;
         font-style: italic;
         transform: translate(5%, 150%);
         animation: loadingAnimation 1s linear infinite;
-      
       }
     }
-    
   }
-
 }
-.main-content-view{
+.main-content-view {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2rem;
-
 }
 
 .listcont {

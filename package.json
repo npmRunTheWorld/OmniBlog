@@ -9,6 +9,7 @@
     "test:unit": "vitest"
   },
   "dependencies": {
+    "@kalimahapps/vue-icons": "^1.4.0",
     "@vueup/vue-quill": "^1.2.0",
     "@vueuse/core": "^10.1.2",
     "core-js": "^3.30.2",

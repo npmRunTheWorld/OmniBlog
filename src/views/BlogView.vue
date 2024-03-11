@@ -1,16 +1,23 @@
 <script setup>
 //imports
-import { ref, reactive, watch, computed, onBeforeUnmount, onMounted } from "vue";
+import {
+  ref,
+  reactive,
+  watch,
+  computed,
+  onBeforeUnmount,
+  onMounted,
+} from "vue";
 import { useBlogStore } from "../stores/blogStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import { doc, deleteDoc } from "firebase/firestore";
-//states, props, general
 
 //pinia state management we must use toreToRefs to destruct the blogStore state
 const blogStore = useBlogStore();
 const { blogCardState } = storeToRefs(blogStore);
+
+//states, props, general
 
 const router = useRoute();
 
@@ -33,10 +40,13 @@ onMounted(() => {
     blogStore.togglePost(payload);
   },
 }); */
-
-
-
-
+const selectedBlog = ref({});
+const isShowingAdditionalDetails = ref(false);
+function handleAdditionalDetails(content, index) {
+  const blog = { ...content, index };
+  selectedBlog.value = blog;
+  isShowingAdditionalDetails.value = true;
+}
 </script>
 
 <template>
@@ -52,8 +62,15 @@ onMounted(() => {
         :key="index + 'individual'"
         :content="content"
         :index="index"
+        @open-modal="handleAdditionalDetails"
       />
     </div>
+
+    <additional-details
+      :blog-object="selectedBlog"
+      v-if="isShowingAdditionalDetails"
+      @closed="isShowingAdditionalDetails = false"
+    />
   </div>
 </template>
 
@@ -71,6 +88,7 @@ onMounted(() => {
   input[type="checkbox"] {
     position: relative;
     border: none;
+    appearance: none;
     -webkit-appearance: none;
     background-color: #fff;
     outline: none;
@@ -78,7 +96,8 @@ onMounted(() => {
     height: 30px;
     border-radius: 20px;
     box-shadow: 0 4px 6px -1px $t-black1, 0 2px 4px -1px $t-black0;
-    transition: 550ms ease background 200ms;
+    cursor: pointer;
+    transition: 350ms ease background 100ms;
   }
 
   input[type="checkbox"]::before {
@@ -91,7 +110,7 @@ onMounted(() => {
     left: 0;
     background: $secondary;
     transform: scale(0.9);
-    transition: 750ms ease all;
+    transition: 550ms ease all;
     box-shadow: 0 4px 6px -1px $t-black1, 0 2px 4px -1px $t-black0;
   }
 
@@ -121,5 +140,13 @@ onMounted(() => {
   input:checked[type="checkbox"] {
     background-color: $secondary;
   }
+}
+
+.individual-blog-card__marquee > div {
+  /* Assuming your cards are direct children of the grid container */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Adjust this as needed */
+  height: 100%;
 }
 </style>

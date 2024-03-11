@@ -1,24 +1,23 @@
-@import './variables.scss';
+@import "./variables.scss";
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
-html,body{
-   margin: 0;
-   padding: 0;
-   color: $text;
-   background-color: $background2-less;
-   overflow: none;
-   
+html,
+body {
+  margin: 0;
+  padding: 0;
+  color: $text;
+  background-color: $background2-less;
+  overflow: none;
 }
 
-body{
+body {
   overflow: none;
   box-sizing: border-box;
 }
-
 
 .flex-start {
   display: flex;
@@ -27,16 +26,44 @@ body{
   width: 100%;
 }
 
-.flex-end{
-  display: flex; 
+.flex-end {
+  display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   width: 100%;
 }
 
-.flex{
+.flex {
   display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.swal2-confirm {
+  background-color: $secondary2 !important;
+  color: $text;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  min-width: 80px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: $primary;
+  }
+}
+
+.swal2-cancel {
+  background-color: rgb(133, 96, 16) !important;
+  color: $text;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  min-width: 80px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: $primary;
+  }
 }
