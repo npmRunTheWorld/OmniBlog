@@ -23,7 +23,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["open-modal"]);
+const emits = defineEmits(["open-modal", "open-edit-modal"]);
 
 const { content, index } = toRefs(props);
 
@@ -76,7 +76,9 @@ function deletePost() {
   });
 }
 
-function editPost() {}
+function editPost() {
+  emits("open-edit-modal", content.value, index.value);
+}
 </script>
 
 <template>

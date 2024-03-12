@@ -39,7 +39,13 @@ body {
   justify-content: center;
   width: 100%;
 }
+.swal2 {
+  z-index: 5000;
+}
 
+.swal2-container {
+  z-index: 5000;
+}
 .swal2-confirm {
   background-color: $secondary2 !important;
   color: $text;

@@ -431,6 +431,7 @@ button {
         padding: 0.5rem;
         border-radius: 5px;
         gap: 1rem;
+        text-transform: capitalize;
 
         p {
           color: rgb(139, 113, 26);

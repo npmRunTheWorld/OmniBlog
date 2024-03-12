@@ -29,10 +29,12 @@ onMounted(() => {
   blogState.contentIndex = blogObject.value.index;
   isMounted.value = true;
   window.addEventListener("keydown", handleEscape);
+  document.body.style.overflow = "hidden";
 });
 
 onUnmounted(() => {
   window.removeEventListener("keydown", handleEscape);
+  document.body.style.overflow = "auto";
 });
 //functions
 function createExcerpt(htmlContent, maxLength = 933) {

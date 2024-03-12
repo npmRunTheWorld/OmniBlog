@@ -42,10 +42,16 @@ onMounted(() => {
 }); */
 const selectedBlog = ref({});
 const isShowingAdditionalDetails = ref(false);
+const isShowingEditPost = ref(false);
 function handleAdditionalDetails(content, index) {
   const blog = { ...content, index };
   selectedBlog.value = blog;
   isShowingAdditionalDetails.value = true;
+}
+function handleEditDetails(content, index) {
+  const blog = { ...content, index };
+  selectedBlog.value = blog;
+  isShowingEditPost.value = true;
 }
 </script>
 
@@ -63,6 +69,7 @@ function handleAdditionalDetails(content, index) {
         :content="content"
         :index="index"
         @open-modal="handleAdditionalDetails"
+        @open-edit-modal="handleEditDetails"
       />
     </div>
 
@@ -70,6 +77,12 @@ function handleAdditionalDetails(content, index) {
       :blog-object="selectedBlog"
       v-if="isShowingAdditionalDetails"
       @closed="isShowingAdditionalDetails = false"
+    />
+
+    <edit-post
+      v-if="isShowingEditPost"
+      :blog-object="selectedBlog"
+      @closed="isShowingEditPost = false"
     />
   </div>
 </template>
