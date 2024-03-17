@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import { quillEditor, Quill } from "vue3-quill";
 import { db, storage } from "../firebase/connection";
 import { useRouter } from "vue-router";
+import { v4 as uuidv4 } from "uuid";
 import {
   addDoc,
   getDocs,
@@ -12,6 +13,7 @@ import {
   collection,
   query,
   where,
+  doc,
 } from "firebase/firestore";
 import { ref as storageRef, uploadBytes } from "firebase/storage";
 
@@ -75,7 +77,7 @@ async function submitPost() {
     quillState.content === "" ||
     quillState.coverImage === ""
   ) {
-    console.log("empty form", quillState);
+    //console.log("empty form", quillState);
 
     let missingFields = "";
     if (!quillState.title) {
@@ -106,7 +108,7 @@ async function submitPost() {
   );
 
   userNameQuerySnap.forEach((doc) => {
-    console.log("found");
+    //console.log("found");
     uniquePostId =
       doc.data().posts.length > 0 ? doc.data().posts.length + 1 : 1;
   });
@@ -114,7 +116,7 @@ async function submitPost() {
   if (uniquePostId === undefined) {
     uniquePostId = 1;
   }
-  console.log(uniquePostId);
+  //console.log(uniquePostId);
 
   const uri = `blogCovers/${userStore.uid}+${userStore.email}/${uniquePostId}+${quillState.title}/${quillState.file.name}`;
 
@@ -122,7 +124,7 @@ async function submitPost() {
 
   await uploadBytes(blogCoversRef, quillState.file, quillState.file.type).then(
     (snapshot) => {
-      console.log("Uploaded a blob or file!");
+      //console.log("Uploaded a blob or file!");
     }
   );
   //reason for using /\s+/ is to split the string by multiple spaces
@@ -131,42 +133,53 @@ async function submitPost() {
   const wordStart = words[0];
   const wordEnd = words[words.length - 1].replace(/\.$/, "");
 
-  await addDoc(collection(db, "posts"), {
-    postId: userStore.uid + "/" + uniquePostId,
-    postIndex: uniquePostId,
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-    title: quillState.title,
-    content: quillState.content,
-    firstName: userStore.firstName,
-    lastName: userStore.lastName,
-    email: userStore.email,
-    uid: userStore.uid,
-    coverImageUri: uri,
-    letterStart: wordStart[0],
-    wordStart: wordStart,
-    wordEnd: wordEnd,
-    categories: quillState.categories,
-  })
-    .then((docRef) => {
-      console.log("Document written with ID: ", docRef.id);
-      userNameQuerySnap.forEach((doc) => {
-        const posts = doc.data().posts;
-        posts.push(`${quillState.title}+${docRef.id}`);
-        setDoc(
-          `${quillState.title}+${docRef.id}`,
-          { posts: posts },
-          { merge: true }
-        );
-      });
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
-    })
-    .finally(() => {
-      console.log("Success moving to blog");
-      router.push({ name: "home" });
+  try {
+    //we didnt use addDoc because addDoc automatically generates a unique id for the document
+    //set doc(doc(db, collectionName, docId), dataToBeSet);
+    const uuid = uuidv4() + "+" + Math.floor(Math.random() * 1000);
+
+    await setDoc(
+      doc(
+        db,
+        "posts",
+        `${quillState.title}+${userStore.uid}+${userStore.email}`
+      ),
+      {
+        postId: uuid + "+" + uniquePostId,
+        postIndex: uniquePostId,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        title: quillState.title,
+        content: quillState.content,
+        firstName: userStore.firstName,
+        lastName: userStore.lastName,
+        email: userStore.email,
+        uid: uuid,
+        coverImageUri: uri,
+        letterStart: wordStart[0],
+        wordStart: wordStart,
+        wordEnd: wordEnd,
+        categories: quillState.categories,
+        postUpdated: false,
+      }
+    );
+
+    modalStore.displayModal({
+      icon: "success",
+      title: "Post Updated!",
+      text: "your post has been updated successfully!",
     });
+  } catch (error) {
+    console.error("Error adding document: ", error);
+
+    modalStore.displayModal({
+      icon: "error",
+      title: "Post Update Failed!",
+      text: `your post failed to update, please try again later!\nerror : ${error}`,
+    });
+  } finally {
+    router.push({ name: "home" });
+  }
 }
 
 function closeEmptyForm() {
@@ -178,7 +191,7 @@ const imagePreview = ref("");
 function handleFileSelect(event) {
   const selectedFile = fileInput?.value?.files[0];
   if (selectedFile) {
-    console.log(URL.createObjectURL(selectedFile));
+    //console.log(URL.createObjectURL(selectedFile));
     const imageObject = URL.createObjectURL(selectedFile);
     imagePreview.value = imageObject;
     quillState.coverImage = imagePreview.value;
@@ -192,14 +205,14 @@ function handleRemoveImage() {
 }
 
 function handleQuillChange(event) {
-  console.log(event.html);
+  //console.log(event.html);
 }
 
 const selectedCategories = ref([]);
 
 const updateCategories = () => {
   // Assuming quillState is part of a larger state management or needs to be emitted
-  console.log(selectedCategories.value); // Replace with appropriate action, like updating a store or emitting an event
+  //console.log(selectedCategories.value); // Replace with appropriate action, like updating a store or emitting an event
   if (quillState.categories.length > 2) {
     quillState.categoriesError = true;
     return;

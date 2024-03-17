@@ -23,9 +23,9 @@ const blogState = reactive({
 const isMounted = ref(false);
 //lifecycle
 onMounted(() => {
-  console.log("blogObject", blogObject.value);
+  //console.log("blogObject", blogObject.value);
   blogState.currentContent = blogObject.value;
-  console.log("blogState.currentContent", blogState.currentContent);
+  //console.log("blogState.currentContent", blogState.currentContent);
   blogState.contentIndex = blogObject.value.index;
   isMounted.value = true;
   window.addEventListener("keydown", handleEscape);

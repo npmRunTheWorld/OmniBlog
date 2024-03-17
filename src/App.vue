@@ -66,16 +66,16 @@ function checkAuth() {
           userStore.email = data.email;
           userStore.username = data.username;
           userStore.setInitials();
-          console.log("working");
+          //console.log("working");
         });
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       } finally {
         isPageLoad.value = false;
       }
     } else {
       navState.userLoggedIn = false;
-      console.log("No user found");
+      //console.log("No user found");
       setTimeout(() => {
         isPageLoad.value = false;
       }, 1500);
@@ -190,9 +190,5 @@ button {
   @media screen and (min-width: 1200px) {
     grid-template-columns: repeat(4, 1fr);
   }
-}
-
-[v-cloak] > * {
-  display: none;
 }
 </style>

@@ -43,14 +43,14 @@ function checkScreen() {
     window.innerWidth ||
     document.documentElement.clientWidth ||
     document.body.clientWidth;
-  console.log("Screen width: " + screenWidth);
+  //console.log("Screen width: " + screenWidth);
 
   // Check screen height
   var screenHeight =
     window.innerHeight ||
     document.documentElement.clientHeight ||
     document.body.clientHeight;
-  console.log("Screen height: " + screenHeight);
+  //console.log("Screen height: " + screenHeight);
 
   if (screenWidth < 767) {
     mobile.isMobile = true;
@@ -58,7 +58,7 @@ function checkScreen() {
     mobile.isMobile = false;
   }
 
-  console.log(screenWidth + "    h:" + screenHeight);
+  //console.log(screenWidth + "    h:" + screenHeight);
 }
 
 //lifecycle hooks
@@ -174,7 +174,7 @@ function mobileRouteChangeEffect() {
             @click.stop="
               () => {
                 toggleMobileNav();
-                console.log('clicked');
+                //console.log('clicked');
               }
             "
           ></div>
@@ -199,14 +199,13 @@ function mobileRouteChangeEffect() {
   @include row-start;
   color: $secondary;
   gap: 1rem;
-  
-  
+
   &:first-child {
     margin-left: 1rem;
   }
-  
-  h1{
-    font-family: 'Courier New', Courier, monospace;
+
+  h1 {
+    font-family: "Courier New", Courier, monospace;
     font-size: 1.6rem;
     padding-top: 0.3rem;
     text-align: center;

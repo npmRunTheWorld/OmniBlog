@@ -37,7 +37,7 @@ const defaultBucketUri = import.meta.env.VITE_APP_STORAGE_ROOT;
 
 //functions
 function deletePost() {
-  console.log("delete post", content.value);
+  //console.log("delete post", content.value);
   modalStore.displayModal({
     title: "Are you sure?",
     text: "this will delete your post forever",
@@ -49,16 +49,21 @@ function deletePost() {
 
       //the image path in URL form contains %
       const imagePathInUrlForm = content.value.blogCoverPhotoUrl;
-      console.log(imagePathInUrlForm);
+      //console.log(imagePathInUrlForm);
       const blogPhotoRef = storageRef(storage, imagePathInUrlForm);
 
       if (imagePathInUrlForm !== "" && imagePathInUrlForm) {
         deleteObject(blogPhotoRef)
           .then((res) => {
-            console.log("Images deleted successfully");
+            //console.log("Images deleted successfully");
           })
           .catch((err) => {
-            console.log("Images failed to delete");
+            //console.log("Images failed to delete");
+            modalStore.displayModal({
+              title: "Error",
+              text: "Failed to delete the image",
+              showCancelButton: false,
+            });
           });
       }
 
@@ -66,11 +71,19 @@ function deletePost() {
 
       deleteDoc(doc(db, "posts", content.value.docId))
         .then(() => {
-          console.log("Document successfully deleted!");
+          modalStore.displayModal({
+            title: "Success",
+            text: "Post deleted successfully",
+            showCancelButton: false,
+          });
           blogStore.blogCardState.splice(index.value, 1);
         })
         .catch((error) => {
-          console.error("Error removing document: ", error);
+          modalStore.displayModal({
+            title: "Error",
+            text: "Failed to delete the post",
+            showCancelButton: false,
+          });
         });
     },
   });
@@ -87,7 +100,6 @@ function editPost() {
       class="card__container"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
-      @click="console.log(content)"
     >
       <div class="card__container-background"></div>
 
@@ -164,7 +176,8 @@ function editPost() {
       width: 16px;
       height: 16px;
       cursor: pointer;
-      filter: invert(0.65);
+      filter: invert(0.75) sepia(1) saturate(4) hue-rotate(180deg)
+        brightness(0.7);
     }
 
     .icon {

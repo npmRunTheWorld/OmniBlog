@@ -9,12 +9,14 @@ import {
   onMounted,
 } from "vue";
 import { useBlogStore } from "../stores/blogStore";
+import { useUserStore } from "../stores/userStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 
 //pinia state management we must use toreToRefs to destruct the blogStore state
 const blogStore = useBlogStore();
+const userStore = useUserStore();
 const { blogCardState } = storeToRefs(blogStore);
 
 //states, props, general
@@ -64,7 +66,9 @@ function handleEditDetails(content, index) {
 
     <div class="individual-blog-card__marquee">
       <BlogCard
-        v-for="(content, index) in blogCardState"
+        v-for="(content, index) in blogStore.getBlogCardByAuthor(
+          userStore.email
+        )"
         :key="index + 'individual'"
         :content="content"
         :index="index"

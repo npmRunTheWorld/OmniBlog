@@ -55,11 +55,14 @@ onMounted(() => {});
 
           <div class="hero-container__img">
             <img
-              :src="`src/assets/blogPhotos/${post.photo}.jpg`"
-              :alt="post.blogCoverPhotoUrl"
+              src="../assets/images/beautealfly.jpg"
+              :alt="'omni butterfly'"
+              preload="auto"
             />
           </div>
         </section>
+
+        <!-- FEATURED POSTS -->
 
         <section
           v-else
@@ -237,8 +240,8 @@ a {
 }
 
 .blog__regular-container-odd {
-  min-width: 100%;
-  width: 100%;
+  min-width: 100vw;
+  width: 100vw;
   flex: 1;
   min-height: 50vh;
   height: 50vh;

@@ -20,7 +20,7 @@
 </template>
 
 <style lang="scss" scoped>
-.loader__container{
+.loader__container {
   display: flex;
   z-index: 100000;
 }
@@ -36,10 +36,14 @@
   position: absolute;
   width: 100%;
   border: 1px solid $secondary;
-  background: linear-gradient(90deg, rgb(68, 85, 36), rgb(14, 66, 59));
+  background: linear-gradient(
+    90deg,
+    rgb(2, 61, 27) 0%,
+    rgb(121, 91, 9) 35%,
+    rgb(94, 138, 43) 100%
+  );
   width: 35px;
   height: 35px;
-  
 }
 
 .spinner div:nth-of-type(1) {
@@ -64,7 +68,6 @@
 .spinner div:nth-of-type(5) {
   transform: rotateX(-90deg) translateY(40%);
   transform-origin: bottom center;
-  
 }
 
 .spinner div:nth-of-type(6) {
@@ -74,7 +77,6 @@
 @keyframes spinner-y0fdc1 {
   0% {
     transform: rotateZ(0) rotateX(-25deg) rotateY(25deg);
-    
   }
 
   50% {

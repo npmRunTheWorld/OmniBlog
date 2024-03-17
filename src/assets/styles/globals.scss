@@ -47,7 +47,7 @@ body {
   z-index: 5000;
 }
 .swal2-confirm {
-  background-color: $secondary2 !important;
+  background-color: rgb(16, 87, 87) !important;
   color: $text;
   border: none;
   padding: 10px 20px;
@@ -56,7 +56,10 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    background-color: $primary;
+    background-color: rgb(75, 128, 103) !important;
+  }
+  &:focus {
+    box-shadow: none !important;
   }
 }
 
@@ -70,6 +73,10 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    background-color: $primary;
+    background-color: rgb(168, 25, 25) !important;
+  }
+
+  &:focus {
+    box-shadow: none !important;
   }
 }

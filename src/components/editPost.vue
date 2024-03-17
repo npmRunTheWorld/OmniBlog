@@ -4,11 +4,24 @@ import { onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { quillEditor, Quill } from "vue3-quill";
 import { db, storage } from "../firebase/connection";
+import { useBlogStore } from "../stores/blogStore";
+import { v4 as uuidv4 } from "uuid";
+
+import {
+  getDocs,
+  query,
+  collection,
+  where,
+  setDoc,
+  doc,
+} from "firebase/firestore";
+import { uploadBytes, deleteObject, ref as storageRef } from "firebase/storage";
 import { useRouter } from "vue-router";
 
 //props, general
 const userStore = useUserStore();
 const modalStore = useModalStore();
+const blogStore = useBlogStore();
 const router = useRouter();
 
 const props = defineProps({
@@ -44,9 +57,9 @@ const imagePreview = ref("");
 const isMounted = ref(false);
 //lifecycle
 onMounted(() => {
-  console.log("blogObject", blogObject.value);
+  //console.log("blogObject", blogObject.value);
   blogState.currentContent = blogObject.value;
-  console.log("blogState.currentContent", blogState.currentContent);
+  //console.log("blogState.currentContent", blogState.currentContent);
   blogState.contentIndex = blogObject.value.index;
   quillState.title = blogState.currentContent.title;
   quillState.content = blogState.currentContent.content;
@@ -54,7 +67,7 @@ onMounted(() => {
   quillState.coverImage = blogState.currentContent.blogCoverPhotoUrl;
   imagePreview.value = blogState.currentContent.blogCoverPhotoUrl;
   const fileImagePathArr = blogState.currentContent.coverImageUri.split("/");
-  console.log(fileImagePathArr);
+  //console.log(fileImagePathArr);
   fileInput.value = fileImagePathArr[fileImagePathArr.length - 1];
   isMounted.value = true;
   window.addEventListener("keydown", handleEscape);
@@ -96,7 +109,7 @@ async function submitPost() {
     quillState.content === "" ||
     quillState.coverImage === ""
   ) {
-    console.log("empty form", quillState);
+    //console.log("empty form", quillState);
 
     let missingFields = "";
     if (!quillState.title) {
@@ -118,76 +131,107 @@ async function submitPost() {
     return;
   }
 
+  //console.log("blogObject", blogObject.value);
+
   quillState.date = quillState.time = new Date().toLocaleTimeString();
+  const oldPostIndex = blogObject.value.postIndex;
+  let uri = blogObject.value.coverImageUri;
 
-  let uniquePostId;
+  //if the cover image has changed, delete the old image and upload the new one
+  if (quillState.coverImage !== blogObject.value.blogCoverPhotoUrl) {
+    const imagePathInUrlForm = quillState.coverImage;
+    //console.log(imagePathInUrlForm);
+    const blogPhotoRef = storageRef(storage, imagePathInUrlForm);
 
-  const userNameQuerySnap = await getDocs(
-    query(collection(db, "users"), where("uid", "==", userStore.uid))
-  );
-
-  userNameQuerySnap.forEach((doc) => {
-    console.log("found");
-    uniquePostId =
-      doc.data().posts.length > 0 ? doc.data().posts.length + 1 : 1;
-  });
-
-  if (uniquePostId === undefined) {
-    uniquePostId = 1;
-  }
-  console.log(uniquePostId);
-
-  const uri = `blogCovers/${userStore.uid}+${userStore.email}/${uniquePostId}+${quillState.title}/${quillState.file.name}`;
-
-  const blogCoversRef = storageRef(storage, uri);
-
-  await uploadBytes(blogCoversRef, quillState.file, quillState.file.type).then(
-    (snapshot) => {
-      console.log("Uploaded a blob or file!");
+    if (imagePathInUrlForm !== "" && imagePathInUrlForm) {
+      deleteObject(blogPhotoRef)
+        .then((res) => {
+          //console.log("Images deleted successfully");
+        })
+        .catch((err) => {
+          //console.log("Images failed to delete");
+        });
     }
-  );
+
+    //push the new image
+    uri = `blogCovers/${userStore.uid}+${userStore.email}/${oldPostIndex}+${quillState.title}/${quillState.file.name}`;
+
+    const blogCoversRef = storageRef(storage, uri);
+
+    await uploadBytes(
+      blogCoversRef,
+      quillState.file,
+      quillState.file.type
+    ).then((snapshot) => {
+      //console.log("Uploaded a blob or file!");
+    });
+  }
+
+  //delete the old image
+
   //reason for using /\s+/ is to split the string by multiple spaces
   // if we used " " it would only split by one space
   const words = quillState.title.trim().split(/\s+/);
   const wordStart = words[0];
   const wordEnd = words[words.length - 1].replace(/\.$/, "");
 
-  await addDoc(collection(db, "posts"), {
-    postId: userStore.uid + "/" + uniquePostId,
-    postIndex: uniquePostId,
-    date: new Date().toLocaleDateString(),
-    time: new Date().toLocaleTimeString(),
-    title: quillState.title,
-    content: quillState.content,
-    firstName: userStore.firstName,
-    lastName: userStore.lastName,
-    email: userStore.email,
-    uid: userStore.uid,
-    coverImageUri: uri,
-    letterStart: wordStart[0],
-    wordStart: wordStart,
-    wordEnd: wordEnd,
-    categories: quillState.categories,
-  })
-    .then((docRef) => {
-      console.log("Document written with ID: ", docRef.id);
-      userNameQuerySnap.forEach((doc) => {
-        const posts = doc.data().posts;
-        posts.push(`${quillState.title}+${docRef.id}`);
-        setDoc(
-          `${quillState.title}+${docRef.id}`,
-          { posts: posts },
-          { merge: true }
-        );
-      });
-    })
-    .catch((error) => {
-      console.error("Error adding document: ", error);
-    })
-    .finally(() => {
-      console.log("Success moving to blog");
-      router.push({ name: "home" });
+  try {
+    //we didnt use addDoc because addDoc automatically generates a unique id for the document
+    //set doc(doc(db, collectionName, docId), dataToBeSet);
+    await setDoc(doc(db, "posts", blogObject.value.docId), {
+      postId: blogObject.value.uid + "+" + oldPostIndex,
+      postIndex: oldPostIndex,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString(),
+      title: quillState.title,
+      content: quillState.content,
+      firstName: userStore.firstName,
+      lastName: userStore.lastName,
+      email: userStore.email,
+      uid: blogObject.value.uid,
+      coverImageUri: uri,
+      letterStart: wordStart[0],
+      wordStart: wordStart,
+      wordEnd: wordEnd,
+      categories: quillState.categories,
+      postUpdated: true,
     });
+
+    const blog = blogStore.blogCardState.find((blog) => {
+      return blog.uid === blogObject.value.uid;
+    });
+
+    blog.title = quillState.title;
+    blog.content = quillState.content;
+    blog.blogHTML = quillState.content;
+    blog.blogCoverPhotoUrl = quillState.coverImage;
+    blog.categories = quillState.categories;
+    blog.date = new Date().toLocaleDateString();
+    blog.time = new Date().toLocaleTimeString();
+    blog.letterStart = wordStart[0];
+    blog.wordStart = wordStart;
+    blog.wordEnd = wordEnd;
+    blog.coverImageUri = uri;
+    blog.postUpdated = true;
+
+    //console.log("blogObject", blogObject.value);
+
+    modalStore.displayModal({
+      icon: "success",
+      title: "Post Updated!",
+      text: "your post has been updated successfully!",
+      onOk: () => {
+        emits("closed");
+      },
+    });
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    modalStore.displayModal({
+      icon: "error",
+      title: "Post Update Failed!",
+      text: `your post failed to update, please try again later!\nerror : ${error}`,
+    });
+  }
 }
 
 function closeEmptyForm() {
@@ -197,7 +241,7 @@ function closeEmptyForm() {
 function handleFileSelect(event) {
   const selectedFile = fileInput?.value?.files[0];
   if (selectedFile) {
-    console.log(URL.createObjectURL(selectedFile));
+    //console.log(URL.createObjectURL(selectedFile));
     const imageObject = URL.createObjectURL(selectedFile);
     imagePreview.value = imageObject;
     quillState.coverImage = imagePreview.value;
@@ -210,15 +254,11 @@ function handleRemoveImage() {
   imagePreview.value = "";
 }
 
-function handleQuillChange(event) {
-  console.log(event.html);
-}
-
 const selectedCategories = ref([]);
 
 const updateCategories = () => {
   // Assuming quillState is part of a larger state management or needs to be emitted
-  console.log(selectedCategories.value); // Replace with appropriate action, like updating a store or emitting an event
+  //console.log(selectedCategories.value); // Replace with appropriate action, like updating a store or emitting an event
   if (quillState.categories.length > 2) {
     quillState.categoriesError = true;
     return;

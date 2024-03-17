@@ -41,7 +41,7 @@ onMounted(async () => {
     const postSnapshot = await getDocs(collection(db, "posts"));
     const blogCardPromises = postSnapshot.docs.map(async (doc) => {
       const data = doc.data();
-      console.log(doc.data());
+      //console.log(doc.data());
 
       const imageRef = storageRef(
         storage,
@@ -56,8 +56,7 @@ onMounted(async () => {
         })
         .catch((error) => {
           //If for some reason this file is not in the server through manual deletion or some other reason, handles an error and the url ?? ""
-
-          console.log(error);
+          //console.log(error);
         });
 
       return {
@@ -78,19 +77,21 @@ onMounted(async () => {
     console.log(blogStore.blogCardState);
 
     const featureShot = await getDocs(collection(db, "features"));
-    blogStore.featureCard = featureShot.docs.map((doc) => {
-      const data = doc.data();
-      console.log(data);
+    blogStore.featureCard = featureShot.docs
+      .map((doc) => {
+        const data = doc.data();
+        console.log(data);
 
-      const featureCard = blogStore.blogCardState.find((blog) => {
-        return blog.postId === data.postId;
-      });
+        const featureCard = blogStore.blogCardState.find((blog) => {
+          return blog.postId === data.postId;
+        });
 
-      console.log(featureCard);
-      if (featureCard) {
-        return featureCard;
-      }
-    });
+        console.log(featureCard);
+        if (featureCard) {
+          return featureCard;
+        }
+      })
+      .filter((blog) => blog);
   } catch (error) {
     console.log(error);
   }
