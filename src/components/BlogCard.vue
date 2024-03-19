@@ -31,8 +31,7 @@ const { content, index } = toRefs(props);
 //states
 const blogStore = useBlogStore();
 const hover = ref(false);
-const showAdditionalDetails = ref(false);
-const defaultBucketUri = import.meta.env.VITE_APP_STORAGE_ROOT;
+
 //lifecycle
 
 //functions
@@ -129,6 +128,7 @@ function editPost() {
         alt="blog-image"
         class="cover-photo"
         @click.prevent="$emit('open-modal', content, index)"
+        loading="lazy"
       />
       <div></div>
       <div class="content__information" :class="hover ? 'hover-effect' : ''">
@@ -170,7 +170,7 @@ function editPost() {
     align-items: flex-end;
     justify-content: flex-end;
     transition: none;
-    height: 50px;
+    height: 20px;
 
     img {
       width: 16px;
@@ -214,18 +214,9 @@ function editPost() {
     }
   }
 
-  .content__information {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    height: 100%;
-    gap: 1rem;
-  }
-
   .cover-photo {
     width: 100%;
-    height: 100%;
+    height: 50%;
     object-fit: cover;
     border-radius: 5px;
     cursor: pointer;
@@ -241,6 +232,15 @@ function editPost() {
       margin-left: 0.3rem;
       transform: translateY(25%);
     }
+  }
+
+  .content__information {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    max-height: 20%;
+    gap: 1rem;
   }
 
   :not(.card__container-background) {

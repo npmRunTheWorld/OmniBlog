@@ -110,7 +110,7 @@ async function submitPost() {
   userNameQuerySnap.forEach((doc) => {
     //console.log("found");
     uniquePostId =
-      doc.data().posts.length > 0 ? doc.data().posts.length + 1 : 1;
+      doc.data()?.posts?.length > 0 ? doc.data()?.posts?.length + 1 ?? 1 : 1;
   });
 
   if (uniquePostId === undefined) {

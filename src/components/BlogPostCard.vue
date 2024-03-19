@@ -32,7 +32,7 @@ onMounted(() => {});
 </script>
 
 <template>
-  <div class="container">
+  <div class="blog-post-card-container">
     <div class="blot__content">
       <div>
         <section v-if="post.welcomeScreen" class="blog__hero-container">
@@ -57,7 +57,7 @@ onMounted(() => {});
             <img
               src="../assets/images/beautealfly.jpg"
               :alt="'omni butterfly'"
-              preload="auto"
+              preload="true"
             />
           </div>
         </section>
@@ -93,9 +93,10 @@ onMounted(() => {});
 </template>
 
 <style lang="scss" scoped>
-.container {
+.blog-post-card-container {
   padding: 0;
   overflow: hidden;
+  min-width: 100vw;
 }
 
 a {
@@ -305,6 +306,13 @@ a {
       margin: 0;
       padding: 3rem;
       transform: none;
+      display: flex;
+
+      .title-container {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
     }
     .hero-container__img {
       order: 1;
@@ -314,12 +322,16 @@ a {
 
   .blog__regular-container {
     flex-direction: column-reverse;
-    padding: 1rem;
-
+    width: 100%;
+    height: 100%;
+    gap: 0;
     .regular-container__title {
+      display: flex;
+      justify-content: center;
       margin-left: 0;
-      width: 100%;
-
+      width: 100% !important;
+      height: 100%;
+      padding: 1rem;
       h1 {
         margin-left: 0;
       }
@@ -331,14 +343,53 @@ a {
         margin-left: 0;
       }
     }
+
+    .regular-container__img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      img {
+        width: 100%;
+        height: 60vh;
+        object-fit: cover;
+      }
+    }
   }
 
   .blog__regular-container-odd {
     flex-direction: column-reverse;
-    padding: 1rem;
+    height: 30%;
+
     .regular-container__title {
+      display: flex;
+      justify-content: center;
       margin-left: 0;
+      width: 100% !important;
+      height: 100%;
+      padding: 1rem;
+      h1 {
+        margin-left: 0;
+      }
+
+      p {
+        margin-left: 0;
+      }
+      a {
+        margin-left: 0;
+      }
+    }
+
+    .regular-container__img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 100%;
+      img {
+        width: 100%;
+        height: 60vh;
+        object-fit: cover;
+      }
     }
   }
 }

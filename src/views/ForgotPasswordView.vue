@@ -64,7 +64,7 @@ function resetClicked() {
       <form class="login">
         <p class="login-register">
           Back to
-          <RouterLink :to="{ name: 'login' }">Log in</RouterLink>
+          <RouterLink class="link" :to="{ name: 'login' }">Log in</RouterLink>
         </p>
 
         <h2>Reset Password</h2>
@@ -213,6 +213,18 @@ function resetClicked() {
 
     @media screen and (min-width: 900px) {
       display: initial;
+    }
+  }
+}
+
+.reset-password {
+  @media screen and (max-width: 900px) {
+    background-size: cover;
+    background-image: url("../assets/background.png");
+    color: white;
+
+    .link {
+      color: beige;
     }
   }
 }

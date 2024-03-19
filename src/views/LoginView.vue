@@ -53,7 +53,7 @@ function login() {
       form.isError = false;
       form.isLoading = false;
       loadStore.isGloballyLoading = true;
-      localStorage.setItem('userLoggedIn', 'true');
+      localStorage.setItem("userLoggedIn", "true");
       router.push({ name: "home" });
     })
     .catch((error) => {
@@ -102,7 +102,7 @@ function login() {
         <div class="error-container">
           <div class="error" v-show="form.isError">{{ form.errorMsg }}</div>
         </div>
-        
+
         <RouterLink :to="{ name: 'forgotpassword' }" class="forgot-password"
           >Forgot your password?</RouterLink
         >
@@ -246,6 +246,14 @@ function login() {
     @media screen and (min-width: 900px) {
       display: initial;
     }
+  }
+}
+
+.login-toplevel {
+  @media screen and (max-width: 900px) {
+    background-size: cover;
+    background-image: url("../assets/images/forestPaint.jpg");
+    background-repeat: no-repeat;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, onBeforeMount, onMounted, watchEffect } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import { RouterView, useRouter } from "vue-router";
 import Navigation from "./components/Navigation.vue";
 import Footer from "./components/Footer.vue";
 import { getAuth, onAuthStateChanged, signOut } from "@firebase/auth";
@@ -9,7 +9,7 @@ import { getUser } from "./firebase/quries/getUser";
 import { useUserStore } from "./stores/userStore";
 
 //general
-const router = useRoute();
+const router = useRouter();
 
 //state
 const currentPath = ref(router.path);
@@ -64,7 +64,7 @@ function checkAuth() {
           userStore.firstName = data.firstName;
           userStore.lastName = data.lastName;
           userStore.email = data.email;
-          userStore.username = data.username;
+          userStore.userName = data.username;
           userStore.setInitials();
           //console.log("working");
         });
@@ -101,7 +101,7 @@ async function logout() {
       <p class="load-text">LOADING...</p>
     </div>
   </div>
-  <div v-cloak v-else>
+  <div v-else>
     <Navigation
       v-show="navState.isNavOpen"
       :isUserLoggedIn="navState.userLoggedIn"

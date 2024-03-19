@@ -234,7 +234,7 @@ function handleEscape(e) {
           padding: 1rem;
           overflow: hidden;
           height: 50%;
-          background-color: #fdfdfdb9;
+          background-color: #cfcfcff6;
           .title-container {
             h1 {
               width: 100%;
@@ -254,7 +254,7 @@ function handleEscape(e) {
             padding: 1rem;
             overflow: hidden;
             height: 100%;
-            background-color: #fdfdfd18;
+            background-color: #fdfdfd2d;
             color: rgb(37, 71, 82);
 
             .icon-title-container {

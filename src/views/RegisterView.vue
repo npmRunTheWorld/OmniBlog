@@ -14,13 +14,14 @@ import {
   where,
 } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useModalStore } from "../stores/modalStore";
 
 defineProps({
   //props
 });
 
 const router = useRouter();
-
+const modalStore = useModalStore();
 //states
 const form = reactive({
   first: "",
@@ -41,6 +42,13 @@ const form = reactive({
 async function persistError() {
   form.isLoading = false;
   form.isError = true;
+
+  modalStore.displayModal({
+    icon: "error",
+    title: "Registration Failed!",
+    text: form?.errorMsg || "An error occurred. Please try again later.",
+    showCancelButton: false,
+  });
 }
 
 async function register() {
@@ -125,14 +133,20 @@ async function register() {
     }
   }
 
-  router.push({ name: "home" });
+  modalStore.displayModal({
+    icon: "success",
+    title: "Registration Successful!",
+    text: "You have successfully registered. Please log in to continue.",
+    showCancelButton: false,
+    onOk: () => {
+      router.push({ name: "login" });
+    },
+  });
 }
 </script>
 
 <template>
   <div class="login-toplevel">
-    <Loading v-show="form.isLoading" />
-
     <div class="login__container">
       <form class="login">
         <p class="login-register">
@@ -331,6 +345,13 @@ async function register() {
     @media screen and (min-width: 900px) {
       display: initial;
     }
+  }
+}
+
+.login-toplevel {
+  @media screen and (max-width: 900px) {
+    background-size: cover;
+    background-image: url("../assets/images/forestPaintRegister.jpg");
   }
 }
 </style>

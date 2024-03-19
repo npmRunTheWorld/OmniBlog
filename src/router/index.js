@@ -1,11 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import ForgotPasswordView from '../views/ForgotPasswordView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import AdminView from '../views/AdminView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "../views/HomeView.vue";
+import LoginView from "../views/LoginView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import ForgotPasswordView from "../views/ForgotPasswordView.vue";
+import ProfileView from "../views/ProfileView.vue";
+import AdminView from "../views/AdminView.vue";
 import viewPostView from "../views/ViewPostView.vue";
+import AboutView from "../views/AboutView.vue";
 import { useUserStore } from "../stores/userStore";
 
 const router = createRouter({
@@ -91,13 +92,27 @@ const router = createRouter({
         title: "View Post",
       },
     },
+    {
+      path: "/about",
+      name: "about",
+      component: AboutView,
+      meta: {
+        title: "About",
+      },
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 };
   },
 });
 
-const validPathsWithoutUser = ["login", "register", "home", "forgotpassword"];
+const validPathsWithoutUser = [
+  "login",
+  "register",
+  "home",
+  "forgotpassword",
+  "about",
+];
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
@@ -126,5 +141,4 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-
-export default router
+export default router;

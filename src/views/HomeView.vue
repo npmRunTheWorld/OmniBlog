@@ -19,7 +19,7 @@ import { ref as storageRef, getDownloadURL } from "firebase/storage";
 const blogStore = useBlogStore();
 const userStore = useUserStore();
 const { isUser: user } = storeToRefs(userStore);
-const defaultBucketUri = import.meta.env.VITE_APP_STORAGE_ROOT;
+const defaultBucketUri = import.meta.env.VITE_FIREBASE_STORAGE_ROOT;
 //states
 const welcomeScreen = reactive({
   title: "Welcome",
@@ -126,21 +126,16 @@ function handleAdditionalDetails(content, index) {
         "
       />
 
-      <div class="individual-blog-card__marquee">
-        <BlogCard
-          v-for="(content, index) in blogStore.blogCardState"
-          :key="index + 'individual'"
-          :content="content"
-          :index="index"
-          @open-modal="handleAdditionalDetails"
-        />
+      <pagination-card-reel
+        :blog-cards="blogStore.blogCardState"
+        @handle-view-modal="handleAdditionalDetails"
+      />
 
-        <additional-details
-          :blog-object="selectedBlog"
-          v-if="isShowingAdditionalDetails"
-          @closed="isShowingAdditionalDetails = false"
-        />
-      </div>
+      <additional-details
+        :blog-object="selectedBlog"
+        v-if="isShowingAdditionalDetails"
+        @closed="isShowingAdditionalDetails = false"
+      />
     </div>
   </div>
 </template>
@@ -189,6 +184,7 @@ function handleAdditionalDetails(content, index) {
   align-items: center;
   justify-content: center;
   gap: 2rem;
+  min-width: 100vw;
 }
 
 .listcont {

@@ -13,6 +13,7 @@ import { useUserStore } from "../stores/userStore";
 import BlogCard from "../components/BlogCard.vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
+import PaginationCardReel from "../components/PaginationCardReel.vue";
 
 //pinia state management we must use toreToRefs to destruct the blogStore state
 const blogStore = useBlogStore();
@@ -64,18 +65,11 @@ function handleEditDetails(content, index) {
       <input type="checkbox" v-model="blogStore.editPost" />
     </div>
 
-    <div class="individual-blog-card__marquee">
-      <BlogCard
-        v-for="(content, index) in blogStore.getBlogCardByAuthor(
-          userStore.email
-        )"
-        :key="index + 'individual'"
-        :content="content"
-        :index="index"
-        @open-modal="handleAdditionalDetails"
-        @open-edit-modal="handleEditDetails"
-      />
-    </div>
+    <PaginationCardReel
+      :is-in-edit-mode="true"
+      @handle-view-modal="handleAdditionalDetails"
+      @handle-edit-modal="handleEditDetails"
+    />
 
     <additional-details
       :blog-object="selectedBlog"
@@ -157,13 +151,5 @@ function handleEditDetails(content, index) {
   input:checked[type="checkbox"] {
     background-color: $secondary;
   }
-}
-
-.individual-blog-card__marquee > div {
-  /* Assuming your cards are direct children of the grid container */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Adjust this as needed */
-  height: 100%;
 }
 </style>

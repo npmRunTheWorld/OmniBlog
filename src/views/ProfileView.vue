@@ -11,7 +11,7 @@ defineProps({});
 
 const userStore = useUserStore();
 const { initials, email, firstName, lastName, userName, uid } =
-  storeToRefs(userStore);sssssssss
+  storeToRefs(userStore);
 const inputs = reactive({
   firstName: "",
   lastName: "",
@@ -30,6 +30,7 @@ onMounted(() => {
   inputs.lastName = lastName.value;
   inputs.email = email.value;
   inputs.username = userName.value;
+  console.log(userName.value);
 });
 
 //functions
@@ -98,8 +99,12 @@ function updateProfile() {
 
 <style lang="scss" scoped>
 .profile {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   .container {
     max-width: 1000px;
+    width: 70%;
     padding: 60px 25px;
 
     h2 {

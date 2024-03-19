@@ -95,10 +95,10 @@ function mobileRouteChangeEffect() {
 <template>
   <header class="header__container">
     <div class="header__logo-container">
-      <RouterLink to="/">
+      <RouterLink to="/" class="blog-title-logo">
         <img src="../assets/images/omniBlogLogo.png" width="40" height="30" />
+        <h1>Omni Blog</h1>
       </RouterLink>
-      <h1>Omni Blog</h1>
     </div>
 
     <div class="header__navigation">
@@ -185,6 +185,14 @@ function mobileRouteChangeEffect() {
 </template>
 
 <style lang="scss" scoped>
+.blog-title-logo {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
+
 .header__container {
   display: flex;
   background-color: $background2;

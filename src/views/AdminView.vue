@@ -1,17 +1,24 @@
 <script setup>
 //imports
 import { ref, reactive } from "vue";
+import { useModalStore } from "../stores/modalStore";
 
 //props, general
 defineProps({});
-
+const modalStore = useModalStore();
 //states
 const adminEmail = ref("");
 const functionMsg = ref(null);
 //lifecycle
 
 //functions
-async function addAdmin() {}
+async function addAdmin() {
+  modalStore.displayModal({
+    icon: "error",
+    title: "Permission Denied",
+    text: "User does not have permission to perform this action, contact blog admin",
+  });
+}
 
 //
 </script>
@@ -39,8 +46,12 @@ async function addAdmin() {}
 
 <style lang="scss" scoped>
 .admin {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   .container {
     max-width: 1000px;
+    width: 60%;
     padding: 60px 25px;
 
     h2 {

@@ -56,14 +56,7 @@ onMounted(() => {
         <h2>Related Posts</h2>
       </div>
 
-      <div class="individual-blog-card__marquee" v-if="hasDataMounted">
-        <BlogCard
-          v-for="(post, index) in blogStore.getBlogCardByAuthor(blogPost.email)"
-          :key="`author-related-post${post.email}-${post.uid}`"
-          :content="post"
-          :index="index"
-        />
-      </div>
+      <pagination-card-reel />
     </div>
   </div>
 </template>

@@ -40,7 +40,7 @@ import youtubeIcon from "@/assets/icons/youtube-brands.svg";
         <div class="site-links__container">
           <RouterLink :to="{ name: 'blog' }">Blog</RouterLink>
           <RouterLink :to="{ name: 'post' }">Post</RouterLink>
-          <RouterLink :to="{ name: 'post' }">Style</RouterLink>
+          <RouterLink :to="{ name: 'about' }">About</RouterLink>
         </div>
       </section>
 

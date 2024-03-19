@@ -1,13 +1,20 @@
 import { initializeApp } from "firebase/app";
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
+const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
+const appId = import.meta.env.VITE_FIREBASE_APP_ID;
+const measurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
 
 var firebaseConfig = {
-  apiKey: "AIzaSyApTX0vyoH_YWHScV4NN1iR3mAK-5lpuXo",
-  authDomain: "omniblog-49459.firebaseapp.com",
-  projectId: "omniblog-49459",
-  storageBucket: "omniblog-49459.appspot.com",
-  messagingSenderId: "597402441506",
-  appId: "1:597402441506:web:ace335161f67ae8da0377b",
-  measurementId: "G-J0W7QH44PD"
+  apiKey,
+  authDomain,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId,
+  measurementId,
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

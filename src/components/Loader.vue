@@ -38,9 +38,9 @@
   border: 1px solid $secondary;
   background: linear-gradient(
     90deg,
-    rgb(2, 61, 27) 0%,
-    rgb(121, 91, 9) 35%,
-    rgb(94, 138, 43) 100%
+    rgb(2, 23, 61) 0%,
+    rgb(9, 121, 116) 85%,
+    rgb(138, 108, 43) 100%
   );
   width: 35px;
   height: 35px;
