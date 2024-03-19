@@ -74,7 +74,7 @@ function handleEscape(e) {
               <h1>{{ blogState.currentContent.title }}</h1>
             </div>
 
-            <div class="content-container">
+            <div class="additional-details-content-container custom-scrollbar">
               <div class="left-side">
                 <div class="author-container icon-title-container">
                   <BsFileEarmarkPerson />
@@ -166,7 +166,6 @@ function handleEscape(e) {
     height: 80%;
     background-color: rgb(206, 205, 201);
     color: black;
-    overflow: hidden;
     word-wrap: break-word;
     overflow-wrap: break-word;
     border-radius: 5px;
@@ -232,7 +231,7 @@ function handleEscape(e) {
           margin-top: auto;
           gap: 1rem;
           padding: 1rem;
-          overflow: hidden;
+
           height: 50%;
           background-color: #cfcfcff6;
           .title-container {
@@ -241,21 +240,56 @@ function handleEscape(e) {
               display: flex;
               justify-content: center;
               font-size: 18px;
-              text-decoration-line: underline;
-              text-underline-offset: 9.5px;
-              color: $brown;
+
               -webkit-text-stroke: 0.3px $black;
+              @media screen and (min-width: 900px) {
+                text-decoration-line: underline;
+                text-underline-offset: 9.5px;
+                color: $brown;
+              }
             }
           }
 
-          .content-container {
+          .additional-details-content-container {
             display: flex;
             gap: 1rem;
             padding: 1rem;
-            overflow: hidden;
             height: 100%;
             background-color: #fdfdfd2d;
             color: rgb(37, 71, 82);
+            overflow-y: auto;
+
+            @media screen and (max-width: 900px) {
+              flex-direction: column;
+              .left-side {
+                order: 2;
+              }
+
+              ::-webkit-scrollbar-track {
+                background-color: rgba(
+                  117,
+                  107,
+                  14,
+                  0.199
+                ); /* Change this to the color you want for the scrollbar track */
+              }
+
+              /* Style the scrollbar thumb (the draggable part) */
+              ::-webkit-scrollbar-thumb {
+                background-color: rgb(88, 124, 112);
+                border-radius: 15px;
+                /* Change this to the color you want for the scrollbar thumb */
+              }
+
+              /* Style the scrollbar thumb on hover */
+              ::-webkit-scrollbar-thumb:hover {
+                background-color: #533d27; /* Change this to the color you want for the hovered scrollbar thumb */
+              }
+
+              ::-webkit-scrollbar {
+                width: 10px; /* Set the width of the scrollbar */
+              }
+            }
 
             .icon-title-container {
               display: flex;
