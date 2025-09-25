@@ -141,62 +141,102 @@ function handleAdditionalDetails(content, index) {
 </template>
 
 <style lang="scss" scoped>
+// ====== MODERN HOME VIEW VARIABLES ======
+:root {
+  --home-bg: rgba(5, 5, 10, 0.95);
+  --home-accent: #06d6a0;
+  --home-text: #f8fafc;
+}
+
+// ====== MODERN HOME CONTAINER ======
 .home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  z-index: 1;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  background: var(--home-bg);
+
+  // ====== MAIN CONTENT VIEW ======
+  .main-content-view {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 100vh;
+
+    // For welcome screen (not logged in)
+    &:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    // For logged in users with blog content
+    &:last-child {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-bottom: 2rem;
+    }
+  }
+
+  // ====== LOADING SCREEN ======
   .screen-loader {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: black;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(6, 214, 160, 0.1) 50%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .screen-loader-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      text-align: center;
 
       .load-text {
-        color: rgb(163, 152, 152);
-        font-weight: bold;
-        font-style: italic;
-        transform: translate(5%, 150%);
-        animation: loadingAnimation 1s linear infinite;
+        color: var(--home-accent);
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        animation: modernLoadingPulse 2s ease-in-out infinite;
       }
     }
   }
 }
-.main-content-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  min-width: 100vw;
+
+// ====== ANIMATIONS ======
+@keyframes modernLoadingPulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.02);
+  }
 }
 
-.listcont {
-  height: 60vh;
-  padding: 2;
-  border-radius: 5px;
-  overflow-y: none;
-}
+// ====== RESPONSIVE DESIGN ======
+@media (max-width: 768px) {
+  .home-container {
+    .main-content-view {
+      padding-bottom: 1rem;
+    }
 
-.warpcont {
-  max-width: fit-content;
-  overflow-y: none;
+    .screen-loader {
+      .screen-loader-container {
+        .load-text {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
 }
 
 .list {
