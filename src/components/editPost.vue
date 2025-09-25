@@ -239,6 +239,7 @@ function closeEmptyForm() {
 }
 
 function handleFileSelect(event) {
+  //if
   const selectedFile = fileInput?.value?.files[0];
   if (selectedFile) {
     //console.log(URL.createObjectURL(selectedFile));

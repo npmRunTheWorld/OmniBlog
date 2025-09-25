@@ -22,6 +22,9 @@ export default defineConfig({
       resolvers: [VueIconsResolver],
     }),
   ],
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
   optimizeDeps: {
     include: ["quill"],
   },

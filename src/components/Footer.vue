@@ -1,6 +1,5 @@
 <script setup>
 //imports
-import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
 import linkedlnIcon from "@/assets/icons/linkedin-brands.svg";
@@ -47,7 +46,7 @@ import youtubeIcon from "@/assets/icons/youtube-brands.svg";
       <div class="title__divider"></div>
 
       <section class="section__copyright">
-        <p>Copyright of AceJokerCapital 2020</p>
+        <p>Copyright of Fairmend LLC. 2020</p>
       </section>
     </div>
   </div>
