@@ -46,10 +46,9 @@ function extractTextFromFeatured(html) {
           <div class="hero-container__content">
             <!-- Animated Title Section -->
             <div class="hero-title-section">
-              <div class="hero-badge">
-                <!-- #todoArt: Add badge icon here -->
+              <!-- <div class="hero-badge">
                 <span class="badge-text">OmniBlog</span>
-              </div>
+              </div> -->
 
               <h1 class="hero-main-title">
                 <span class="title-line-1">Transform Your</span>
@@ -244,6 +243,7 @@ a {
   display: flex;
   align-items: center;
   position: relative;
+  z-index: 2;
   background: radial-gradient(
       ellipse at top left,
       rgba(6, 214, 160, 0.1) 0%,
@@ -496,7 +496,8 @@ a {
       position: relative;
       width: 100%;
       max-width: 500px;
-      height: 500px;
+      aspect-ratio: 1;
+      margin: 0 auto;
 
       .main-butterfly {
         position: relative;
@@ -1013,7 +1014,6 @@ a {
       left: 0;
       right: 0;
       bottom: 0;
-
       .float-element {
         position: absolute;
         width: 6px;
@@ -1381,6 +1381,7 @@ a {
     flex-direction: column;
     padding: 1rem;
     min-height: auto;
+    z-index: 2;
 
     .hero-container__content {
       order: 2;
@@ -1565,6 +1566,25 @@ a {
       .featured-image-section {
         .featured-image-container {
           height: 250px;
+        }
+      }
+    }
+  }
+
+  // Mobile responsiveness for butterfly section
+  .hero-image-section {
+    min-height: 400px;
+    padding: 2rem 1rem;
+
+    .butterfly-showcase {
+      max-width: 280px;
+      
+      .main-butterfly .butterfly-overlay {
+        .glow-effect {
+          top: -10%;
+          left: -10%;
+          width: 120%;
+          height: 120%;
         }
       }
     }

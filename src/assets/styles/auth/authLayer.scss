@@ -1,0 +1,100 @@
+.auth,
+.auth-login,
+.auth-register,
+.auth-reset-password {
+  @media screen and (max-width: 768px) {
+    form {
+      .mobile-text-black {
+        color: $t-black5;
+      }
+      a {
+        color: $black;
+        text-decoration: underline;
+
+        &:hover {
+          text-decoration: underline;
+          text-underline-offset: 0.3rem;
+        }
+      }
+    }
+  }
+
+  background-color: black;
+}
+
+.angle,
+.angle-login,
+.angle-register {
+  display: none;
+  position: absolute;
+  transform: rotateZ(3deg);
+  background-color: black;
+  width: 60px;
+  right: -28px;
+  height: 101%;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    animation: backgroundShift 20s linear infinite;
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: 900px) {
+    display: initial;
+  }
+}
+
+/* 🔹 Variant 1: Default / Angle */
+.angle::before {
+  background: repeating-linear-gradient(
+    123deg,
+    transparent,
+    transparent 2px,
+    rgba(226, 123, 75, 0.712) 2px,
+    rgba(27, 140, 168, 0.315) 4px
+  );
+}
+
+
+/* 🔹 Variant 2: Login */
+.auth-login::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    123deg,
+    transparent,
+    transparent 2px,
+    rgba(26, 148, 128, 0.582) 2px,
+    rgba(138, 8, 62, 0.37) 4px
+  );
+}
+
+/* 🔹 Variant 3: Register */
+.auth-register::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    123deg,
+    transparent,
+    transparent 2px,
+    rgba(61, 161, 31, 0.267) 2px,
+    rgba(151, 118, 9, 0.342) 4px
+  );
+}
+
+.auth-reset-password::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    123deg,
+    transparent,
+    transparent 2px,
+    rgba(207, 81, 23, 0.582) 2px,
+    rgba(138, 8, 62, 0.37) 4px
+  );
+}

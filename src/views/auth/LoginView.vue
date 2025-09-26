@@ -1,11 +1,11 @@
 <script setup>
 //imports
-import { ref, reactive } from "vue";
+import { reactive } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { email, password } from "@/assets/icons";
-import firebaseApp from "../firebase/firebaseInit";
+import firebaseApp from "@/firebase/firebaseInit";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
-import { useLoadStore } from "../stores/loadStore";
+import { useLoadStore } from "@/stores/loadStore";
 
 defineProps({
   //props
@@ -69,17 +69,19 @@ function login() {
 </script>
 
 <template>
-  <div class="login-toplevel">
+  <div class="login-toplevel auth auth-login">
     <Loading v-show="form.isLoading" />
 
     <div class="login__container">
       <form class="login">
-        <p class="login-register">
+        <p class="login-register mobile-text-black">
           Don't have an account?
-          <RouterLink :to="{ name: 'register' }">Sign up</RouterLink>
+          <RouterLink :to="{ name: 'register' }" class="muted-hov"
+            >Sign up</RouterLink
+          >
         </p>
 
-        <h2>Login to Omni Blog</h2>
+        <h2 class="gradient-text">Login to Omni Blog</h2>
         <div class="input__container">
           <div class="input">
             <input
@@ -103,13 +105,15 @@ function login() {
           <div class="error" v-show="form.isError">{{ form.errorMsg }}</div>
         </div>
 
-        <RouterLink :to="{ name: 'forgotpassword' }" class="forgot-password"
+        <RouterLink
+          :to="{ name: 'forgotpassword' }"
+          class="forgot-password muted-hov"
           >Forgot your password?</RouterLink
         >
 
         <button type="submit" @click.prevent="login">Sign in</button>
 
-        <div class="angle"></div>
+        <div class="angle angle-login"></div>
       </form>
       <div class="bg"></div>
     </div>
@@ -117,6 +121,8 @@ function login() {
 </template>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/auth/authLayer.scss";
+
 .login__container {
   display: flex;
   height: 100vh;
@@ -143,16 +149,6 @@ function login() {
       padding: 0 50px;
     }
 
-    a {
-      color: $black;
-      text-decoration: underline;
-
-      &:hover {
-        text-decoration: underline;
-        text-underline-offset: 0.3rem;
-      }
-    }
-
     h2 {
       display: flex;
       text-align: center;
@@ -165,36 +161,16 @@ function login() {
       }
     }
 
-    .login__register {
-      @include row-start;
+    a {
+      text-decoration: underline;
     }
 
-    .input__container {
-      @include col-start;
-      max-width: 350px;
-      gap: 1rem;
-      .input {
-        @include row-start;
-        gap: 1rem;
-        position: relative;
-        margin-bottom: 8px;
-        input {
-          width: 100%;
-          border: none;
-          background-color: #ebebeb;
-          padding: 4px 4px 4px 30px;
+    button {
+      margin-top: 1rem;
+    }
 
-          &:focus {
-            outline: none;
-          }
-        }
-
-        img {
-          width: 14px;
-          position: absolute;
-          left: 6px;
-        }
-      }
+    .login__register {
+      @include row-start;
     }
 
     .error-container {
@@ -209,7 +185,6 @@ function login() {
     }
 
     .forgot-password {
-      color: $black;
       text-decoration: none;
 
       &:hover {
@@ -218,26 +193,14 @@ function login() {
       }
     }
 
-    .angle {
-      display: none;
-      position: absolute;
-      transform: rotateZ(3deg);
-      background-color: $background2-less;
-      width: 65px;
-      right: -38px;
-      height: 101%;
-
-      @media screen and (min-width: 900px) {
-        display: initial;
-      }
-    }
+    
   }
 
   .bg {
     display: none;
     flex: 2;
     background-size: cover;
-    background-image: url("../assets/images/forestPaint.jpg");
+    background-image: url("@/assets/images/forestPaint.jpg");
     width: 100%;
     height: 100%;
     background-repeat: no-repeat;
@@ -249,10 +212,11 @@ function login() {
   }
 }
 
+
 .login-toplevel {
   @media screen and (max-width: 900px) {
     background-size: cover;
-    background-image: url("../assets/images/forestPaint.jpg");
+    background-image: url("@/assets/images/forestPaint.jpg");
     background-repeat: no-repeat;
   }
 }

@@ -1,18 +1,11 @@
 <script setup>
 //imports
-import {
-  ref,
-  reactive,
-  watch,
-  onMounted,
-  onBeforeMount,
-  onUnmounted,
-  computed,
-} from "vue";
+import { reactive, onMounted, onBeforeMount, onUnmounted, computed } from "vue";
 import { RouterLink } from "vue-router";
 
-import menuIcon from "../assets/Icons/bars-regular.svg";
-
+import ProfileMenu from "./ProfileMenu.vue";
+import { useUserStore } from "../stores/userStore";
+import { Icon } from "@iconify/vue";
 //states, props, general
 
 const props = defineProps({
@@ -29,6 +22,9 @@ const props = defineProps({
 });
 
 defineEmits(["logout"]);
+
+//stores
+const userStore = useUserStore();
 
 //states
 const mobile = reactive({
@@ -52,10 +48,12 @@ function checkScreen() {
     document.body.clientHeight;
   //console.log("Screen height: " + screenHeight);
 
-  if (screenWidth < 767) {
+  if (screenWidth <= 768) {
     mobile.isMobile = true;
   } else {
     mobile.isMobile = false;
+    mobile.isMobileNav = false; // Close mobile nav when switching to desktop
+    mobile.isMobileMenuClicked = false;
   }
 
   //console.log(screenWidth + "    h:" + screenHeight);
@@ -65,9 +63,13 @@ function checkScreen() {
 onBeforeMount(() => {
   window.addEventListener("resize", checkScreen);
   checkScreen();
+  console.log("Navigation mounted", mobile.isMobile);
 });
 
-onMounted(() => {});
+onMounted(() => {
+  window.addEventListener("resize", checkScreen);
+  checkScreen();
+});
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkScreen);
@@ -105,7 +107,11 @@ function mobileRouteChangeEffect() {
     <!-- Logo Section with Brand Logo -->
     <div class="logo-section">
       <RouterLink to="/" class="modern-logo">
-        <img src="@/assets/images/omniBlogLogo.png" alt="OmniBlog" class="brand-logo">
+        <img
+          src="@/assets/images/omniBlogLogo.png"
+          alt="OmniBlog"
+          class="brand-logo"
+        />
         <div class="logo-text">
           <h1>
             <span class="logo-omni">Omni</span>
@@ -161,13 +167,17 @@ function mobileRouteChangeEffect() {
               <div class="button-glow"></div>
             </RouterLink>
 
-            <ProfileMenu v-else @logout="$emit('logout')" class="profile-menu" />
+            <ProfileMenu
+              v-else
+              @logout="$emit('logout')"
+              class="profile-menu"
+            />
           </div>
         </div>
       </nav>
 
       <!-- Modern Mobile Menu Button -->
-      <div 
+      <div
         class="mobile-menu-button"
         v-show="mobile.isMobile && !mobile.isMobileMenuClicked"
         @click="toggleMobileNav"
@@ -180,123 +190,166 @@ function mobileRouteChangeEffect() {
       </div>
 
       <!-- Ultra-Modern Mobile Navigation -->
-      <Transition name="mobile-nav-slide" v-if="mobile.isMobile && mobile.isMobileNav">
-        <nav class="modern-mobile-nav" v-show="!mobile.linkClick">
-          <!-- Mobile Nav Background -->
-          <div class="mobile-nav-background">
-            <div class="mobile-gradient"></div>
-            <div class="mobile-particles">
-              <div class="mobile-particle" v-for="n in 8" :key="n"></div>
-            </div>
+      <nav
+        class="modern-mobile-nav"
+        v-if="mobile.isMobile && mobile.isMobileNav"
+      >
+        <!-- Mobile Nav Background -->
+        <div class="mobile-nav-background">
+          <div class="mobile-gradient"></div>
+          <div class="mobile-particles">
+            <div class="mobile-particle" v-for="n in 8" :key="n"></div>
+          </div>
+        </div>
+
+        <!-- Mobile Nav Content -->
+        <div class="mobile-nav-content">
+          <!-- Close Button -->
+          <div class="mobile-close-button">
+            <button @click.stop="toggleMobileNav" class="close-btn">
+              <span class="close-line close-line-1"></span>
+              <span class="close-line close-line-2"></span>
+            </button>
           </div>
 
-          <!-- Mobile Nav Content -->
-          <div class="mobile-nav-content">
-            <!-- Close Button -->
-            <div class="mobile-close-button">
-              <button @click.stop="toggleMobileNav" class="close-btn">
-                <span class="close-line close-line-1"></span>
-                <span class="close-line close-line-2"></span>
-              </button>
+          <!-- Mobile Logo -->
+          <div class="mobile-logo">
+            <div class="mobile-butterfly">
+              <div class="mobile-wing wing-left"></div>
+              <div class="mobile-wing wing-right"></div>
+              <div class="mobile-body"></div>
             </div>
+            <h2>OmniBlog</h2>
+          </div>
 
-            <!-- Mobile Logo -->
-            <div class="mobile-logo">
-              <div class="mobile-butterfly">
-                <div class="mobile-wing wing-left"></div>
-                <div class="mobile-wing wing-right"></div>
-                <div class="mobile-body"></div>
-              </div>
-              <h2>OmniBlog</h2>
-            </div>
+          <!-- Mobile Navigation Links -->
+          <ul class="mobile-nav-links">
+            <!-- Mobile Auth Section -->
+            <li
+              class="mobile-nav-item mobile-auth-section"
+              v-if="!isUserLoggedIn"
+            >
+              <RouterLink
+                :to="{ name: 'login' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-login-btn"
+              >
+                <span class="mobile-link-icon">
+                  <Icon icon="mdi-light:login" />
+                </span>
+                <span class="mobile-link-text">Log in</span>
+              </RouterLink>
+            </li>
 
-            <!-- Mobile Navigation Links -->
-            <ul class="mobile-nav-links">
-              <li class="mobile-nav-item">
-                <div class="mobile-auth" v-if="!isUserLoggedIn">
-                  <RouterLink
-                    :to="{ name: 'login' }"
-                    @click.stop="toggleMobileNav"
-                    class="mobile-login-btn"
-                  >
-                    <span class="mobile-btn-text">Log in</span>
-                    <div class="mobile-btn-glow"></div>
-                  </RouterLink>
+            <!-- Mobile User Info -->
+            <li class="mobile-nav-item mobile-user-info" v-if="isUserLoggedIn">
+              <div class="mobile-user-details">
+                <div class="mobile-user-avatar">
+                  <span class="user-initials">{{
+                    userStore.initials || "U"
+                  }}</span>
                 </div>
-                <ProfileMenu
-                  v-else
-                  :isMobile="mobile.isMobile"
-                  @logout="$emit('logout')"
-                  @routechange="mobileRouteChangeEffect"
-                  class="mobile-profile"
-                />
-              </li>
-              
-              <li class="mobile-nav-item">
-                <RouterLink
-                  :to="{ name: 'home' }"
-                  @click.stop="toggleMobileNav"
-                  class="mobile-nav-link"
-                >
-                  <span class="mobile-link-icon">🏠</span>
-                  <span class="mobile-link-text">{{ titles }}</span>
-                </RouterLink>
-              </li>
-              
-              <li class="mobile-nav-item">
-                <RouterLink 
-                  :to="{ name: 'blog' }" 
-                  @click.stop="toggleMobileNav"
-                  class="mobile-nav-link"
-                >
-                  <!-- #todoArt: Add blog icon here -->
-                  <span class="mobile-link-text">Blog</span>
-                </RouterLink>
-              </li>
-              
-              <li class="mobile-nav-item">
-                <RouterLink 
-                  :to="{ name: 'post' }" 
-                  @click.stop="toggleMobileNav"
-                  class="mobile-nav-link"
-                >
-                  <!-- #todoArt: Add create post icon here -->
-                  <span class="mobile-link-text">Create Post</span>
-                </RouterLink>
-              </li>
-            </ul>
+                <div class="mobile-user-text">
+                  <p class="user-name">
+                    {{ userStore.firstName || "User" }}
+                    {{ userStore.lastName || "" }}
+                  </p>
+                  <p class="user-email">{{ userStore.email }}</p>
+                </div>
+              </div>
+            </li>
 
-            <!-- Mobile Footer -->
-            <div class="mobile-nav-footer">
-              <p class="mobile-tagline">Transform Ideas Into Stories</p>
-            </div>
+            <li class="mobile-nav-item">
+              <RouterLink
+                :to="{ name: 'home' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-link-icon">
+                  <Icon icon="mdi-light:home" />
+                </span>
+                <span class="mobile-link-text">{{ titles }}</span>
+              </RouterLink>
+            </li>
+
+            <li class="mobile-nav-item">
+              <RouterLink
+                :to="{ name: 'blog' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-link-icon"
+                  ><Icon icon="mdi-light:book"
+                /></span>
+                <span class="mobile-link-text">Blog</span>
+              </RouterLink>
+            </li>
+
+            <li class="mobile-nav-item">
+              <RouterLink
+                :to="{ name: 'post' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-link-icon">
+                  <Icon icon="mdi-light:pencil" />
+                </span>
+                <span class="mobile-link-text">Create Post</span>
+              </RouterLink>
+            </li>
+
+            <!-- Additional Navigation Links -->
+            <li class="mobile-nav-item" v-if="isUserLoggedIn">
+              <RouterLink
+                :to="{ name: 'profile' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-link-icon">👤</span>
+                <span class="mobile-link-text">Profile</span>
+              </RouterLink>
+            </li>
+
+            <li class="mobile-nav-item" v-if="isUserLoggedIn">
+              <RouterLink
+                :to="{ name: 'admin' }"
+                @click.stop="toggleMobileNav"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-link-icon">⚙️</span>
+                <span class="mobile-link-text">Admin</span>
+              </RouterLink>
+            </li>
+
+            <!-- Mobile Logout Button -->
+            <li class="mobile-nav-item" v-if="isUserLoggedIn">
+              <button
+                @click="
+                  $emit('logout');
+                  toggleMobileNav();
+                "
+                class="mobile-logout-btn"
+              >
+                <span class="mobile-link-icon">🚪</span>
+                <span class="mobile-link-text">Log Out</span>
+              </button>
+            </li>
+          </ul>
+
+          <!-- Mobile Footer -->
+          <div class="mobile-nav-footer">
+            <p class="mobile-tagline">Transform Ideas Into Stories</p>
           </div>
+        </div>
 
-          <!-- Mobile Background Overlay -->
-          <div
-            class="mobile-nav-overlay"
-            @click.stop="toggleMobileNav"
-          ></div>
-        </nav>
-      </Transition>
+        <!-- Mobile Background Overlay -->
+        <div class="mobile-nav-overlay" @click.stop="toggleMobileNav"></div>
+      </nav>
     </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
-// ====== ULTRA-MODERN NAVIGATION VARIABLES ======
-:root {
-  --nav-height: 80px;
-  --nav-bg: rgba(10, 10, 15, 0.85);
-  --nav-border: rgba(6, 214, 160, 0.2);
-  --nav-text: #f8fafc;
-  --nav-text-muted: #cbd5e1;
-  --nav-accent: #06d6a0;
-  --nav-accent-light: #40f99b;
-  --nav-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
 
 // ====== MODERN HEADER CONTAINER ======
 .modern-header {
@@ -308,14 +361,12 @@ function mobileRouteChangeEffect() {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--nav-border);
   box-shadow: var(--nav-shadow);
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  overflow: hidden;
   position: relative;
-
+  z-index: 10;
   // Animated Background
   .header-background {
     position: absolute;
@@ -332,9 +383,10 @@ function mobileRouteChangeEffect() {
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(6, 214, 160, 0.05) 50%, 
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(6, 214, 160, 0.05) 50%,
         transparent 100%
       );
       animation: gradientFlow 8s ease-in-out infinite;
@@ -354,12 +406,30 @@ function mobileRouteChangeEffect() {
         opacity: 0;
         animation: navParticleFloat 6s ease-in-out infinite;
 
-        &:nth-child(1) { left: 10%; animation-delay: 0s; }
-        &:nth-child(2) { left: 30%; animation-delay: 1s; }
-        &:nth-child(3) { left: 50%; animation-delay: 2s; }
-        &:nth-child(4) { left: 70%; animation-delay: 3s; }
-        &:nth-child(5) { left: 90%; animation-delay: 4s; }
-        &:nth-child(6) { left: 15%; animation-delay: 5s; }
+        &:nth-child(1) {
+          left: 10%;
+          animation-delay: 0s;
+        }
+        &:nth-child(2) {
+          left: 30%;
+          animation-delay: 1s;
+        }
+        &:nth-child(3) {
+          left: 50%;
+          animation-delay: 2s;
+        }
+        &:nth-child(4) {
+          left: 70%;
+          animation-delay: 3s;
+        }
+        &:nth-child(5) {
+          left: 90%;
+          animation-delay: 4s;
+        }
+        &:nth-child(6) {
+          left: 15%;
+          animation-delay: 5s;
+        }
       }
     }
   }
@@ -385,7 +455,7 @@ function mobileRouteChangeEffect() {
       padding: 6px;
       filter: drop-shadow(0 0 10px rgba(6, 214, 160, 0.4));
       transition: var(--transition-smooth);
-      
+
       &:hover {
         background: rgba(255, 255, 255, 1);
         filter: drop-shadow(0 0 15px rgba(6, 214, 160, 0.6));
@@ -482,7 +552,11 @@ function mobileRouteChangeEffect() {
             left: 50%;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, var(--nav-accent), var(--nav-accent-light));
+            background: linear-gradient(
+              90deg,
+              var(--nav-accent),
+              var(--nav-accent-light)
+            );
             transition: var(--transition-spring);
             transform: translateX(-50%);
             border-radius: 2px;
@@ -524,9 +598,15 @@ function mobileRouteChangeEffect() {
             border-radius: 50%;
             animation: loadingPulse 1.4s ease-in-out infinite;
 
-            &:nth-child(1) { animation-delay: 0s; }
-            &:nth-child(2) { animation-delay: 0.2s; }
-            &:nth-child(3) { animation-delay: 0.4s; }
+            &:nth-child(1) {
+              animation-delay: 0s;
+            }
+            &:nth-child(2) {
+              animation-delay: 0.2s;
+            }
+            &:nth-child(3) {
+              animation-delay: 0.4s;
+            }
           }
         }
       }
@@ -559,7 +639,12 @@ function mobileRouteChangeEffect() {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(255, 255, 255, 0.2),
+              transparent
+            );
             transition: left 0.5s;
           }
 
@@ -599,6 +684,7 @@ function mobileRouteChangeEffect() {
   cursor: pointer;
   transition: var(--transition-smooth);
   backdrop-filter: blur(10px);
+  z-index: 1001;
 
   .hamburger-icon {
     display: flex;
@@ -634,10 +720,12 @@ function mobileRouteChangeEffect() {
 .modern-mobile-nav {
   position: fixed;
   top: 0;
+  left: 0;
   right: 0;
-  width: 100%;
+  bottom: 0;
+  width: 100vw;
   height: 100vh;
-  z-index: 2000;
+  z-index: 9999 !important;
   display: flex;
 
   .mobile-nav-background {
@@ -646,15 +734,15 @@ function mobileRouteChangeEffect() {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
 
     .mobile-gradient {
       position: absolute;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, 
-        rgba(10, 10, 15, 0.98) 0%, 
-        rgba(5, 5, 16, 0.98) 100%
+      background: linear-gradient(
+        135deg,
+        rgba(10, 10, 15, 1) 0%,
+        rgba(5, 5, 16, 1) 100%
       );
       backdrop-filter: blur(20px);
     }
@@ -673,14 +761,46 @@ function mobileRouteChangeEffect() {
         opacity: 0;
         animation: mobileParticleFloat 8s ease-in-out infinite;
 
-        &:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
-        &:nth-child(2) { top: 40%; right: 15%; animation-delay: 1s; }
-        &:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
-        &:nth-child(4) { top: 60%; right: 25%; animation-delay: 3s; }
-        &:nth-child(5) { bottom: 20%; left: 60%; animation-delay: 4s; }
-        &:nth-child(6) { top: 10%; right: 40%; animation-delay: 5s; }
-        &:nth-child(7) { bottom: 60%; left: 80%; animation-delay: 6s; }
-        &:nth-child(8) { top: 80%; right: 60%; animation-delay: 7s; }
+        &:nth-child(1) {
+          top: 20%;
+          left: 10%;
+          animation-delay: 0s;
+        }
+        &:nth-child(2) {
+          top: 40%;
+          right: 15%;
+          animation-delay: 1s;
+        }
+        &:nth-child(3) {
+          bottom: 30%;
+          left: 20%;
+          animation-delay: 2s;
+        }
+        &:nth-child(4) {
+          top: 60%;
+          right: 25%;
+          animation-delay: 3s;
+        }
+        &:nth-child(5) {
+          bottom: 20%;
+          left: 60%;
+          animation-delay: 4s;
+        }
+        &:nth-child(6) {
+          top: 10%;
+          right: 40%;
+          animation-delay: 5s;
+        }
+        &:nth-child(7) {
+          bottom: 60%;
+          left: 80%;
+          animation-delay: 6s;
+        }
+        &:nth-child(8) {
+          top: 80%;
+          right: 60%;
+          animation-delay: 7s;
+        }
       }
     }
   }
@@ -688,12 +808,12 @@ function mobileRouteChangeEffect() {
   .mobile-nav-content {
     width: 320px;
     height: 100%;
-    background: rgba(15, 15, 25, 0.95);
+    background: #0f0f19 !important;
     backdrop-filter: blur(30px);
-    border-left: 1px solid rgba(6, 214, 160, 0.2);
-    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5);
+    border-left: 2px solid rgba(6, 214, 160, 0.4);
+    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.8);
     padding: 2rem;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     margin-left: auto;
     position: relative;
@@ -761,7 +881,11 @@ function mobileRouteChangeEffect() {
 
         .mobile-wing {
           position: absolute;
-          background: linear-gradient(135deg, var(--nav-accent), var(--nav-accent-light));
+          background: linear-gradient(
+            135deg,
+            var(--nav-accent),
+            var(--nav-accent-light)
+          );
           border-radius: 50% 10% 50% 80%;
           box-shadow: 0 0 10px rgba(6, 214, 160, 0.3);
           animation: mobileWingFlap 2.5s ease-in-out infinite;
@@ -809,12 +933,18 @@ function mobileRouteChangeEffect() {
 
     .mobile-nav-links {
       list-style: none;
-      margin: 0;
+      margin: 2rem 0;
       padding: 0;
       flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
 
       .mobile-nav-item {
-        margin-bottom: 1rem;
+        margin-bottom: 0;
+        width: 100%;
+        display: block;
 
         .mobile-auth {
           .mobile-login-btn {
@@ -846,7 +976,12 @@ function mobileRouteChangeEffect() {
               left: -100%;
               width: 100%;
               height: 100%;
-              background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+              background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+              );
               transition: left 0.5s;
             }
 
@@ -870,14 +1005,15 @@ function mobileRouteChangeEffect() {
           align-items: center;
           gap: 1rem;
           padding: 1rem 1.5rem;
-          color: var(--nav-text);
+          color: #ffffff;
           text-decoration: none;
           border-radius: 12px;
           font-weight: 600;
           font-size: 1rem;
           transition: var(--transition-smooth);
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(6, 214, 160, 0.2);
+          width: 100%;
 
           .mobile-link-icon {
             font-size: 1.2rem;
@@ -904,6 +1040,127 @@ function mobileRouteChangeEffect() {
             border-color: var(--nav-accent);
             color: var(--nav-accent);
             box-shadow: 0 0 20px rgba(6, 214, 160, 0.2);
+          }
+        }
+
+        .mobile-logout-btn {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          color: #ef4444;
+          background: rgba(239, 68, 68, 0.1);
+          border: 1px solid rgba(239, 68, 68, 0.2);
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: var(--transition-smooth);
+          width: 100%;
+
+          .mobile-link-icon {
+            font-size: 1.2rem;
+            opacity: 0.8;
+          }
+
+          .mobile-link-text {
+            flex: 1;
+            text-align: left;
+          }
+
+          &:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            transform: translateX(8px);
+
+            .mobile-link-icon {
+              opacity: 1;
+            }
+          }
+        }
+
+        .mobile-login-btn {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          color: var(--nav-text);
+          text-decoration: none;
+          border-radius: 12px;
+          font-weight: 600;
+          font-size: 1rem;
+          transition: var(--transition-smooth);
+          background: linear-gradient(
+            135deg,
+            var(--nav-accent),
+            var(--nav-accent-light)
+          );
+          border: 1px solid var(--nav-accent);
+          box-shadow: 0 4px 12px rgba(6, 214, 160, 0.3);
+
+          .mobile-link-icon {
+            font-size: 1.2rem;
+          }
+
+          .mobile-link-text {
+            flex: 1;
+            color: white;
+            font-weight: 700;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(6, 214, 160, 0.4);
+          }
+        }
+
+        .mobile-user-info {
+          margin-bottom: 1.5rem;
+          padding: 0 !important;
+
+          .mobile-user-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid rgba(6, 214, 160, 0.2);
+            border-radius: 12px;
+
+            .mobile-user-avatar {
+              width: 48px;
+              height: 48px;
+              background: var(--nav-accent);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+
+              .user-initials {
+                color: white;
+                font-weight: 700;
+                font-size: 1.1rem;
+              }
+            }
+
+            .mobile-user-text {
+              flex: 1;
+
+              .user-name {
+                color: var(--nav-text);
+                font-weight: 600;
+                font-size: 1rem;
+                margin: 0 0 0.25rem 0;
+              }
+
+              .user-email {
+                color: var(--nav-text-muted);
+                font-size: 0.875rem;
+                margin: 0;
+                opacity: 0.8;
+              }
+            }
           }
         }
       }
@@ -933,50 +1190,81 @@ function mobileRouteChangeEffect() {
 
 // ====== MODERN NAVIGATION ANIMATIONS ======
 @keyframes gradientFlow {
-  0%, 100% { transform: translateX(-50px); opacity: 0.3; }
-  50% { transform: translateX(50px); opacity: 0.6; }
+  0%,
+  100% {
+    transform: translateX(-50px);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(50px);
+    opacity: 0.6;
+  }
 }
 
 @keyframes navParticleFloat {
-  0%, 100% { 
-    opacity: 0; 
+  0%,
+  100% {
+    opacity: 0;
     transform: translateY(var(--nav-height)) scale(0);
   }
-  50% { 
-    opacity: 0.6; 
+  50% {
+    opacity: 0.6;
     transform: translateY(-10px) scale(1);
   }
 }
 
 @keyframes logoButterfly {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-2px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(1deg);
+  }
 }
 
 @keyframes logoWingFlap {
-  0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
-  50% { transform: rotateY(-10deg) rotateX(5deg); }
+  0%,
+  100% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  50% {
+    transform: rotateY(-10deg) rotateX(5deg);
+  }
 }
 
 @keyframes loadingPulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 @keyframes mobileParticleFloat {
-  0%, 100% { 
-    opacity: 0; 
+  0%,
+  100% {
+    opacity: 0;
     transform: translate(0, 0) scale(0);
   }
-  50% { 
-    opacity: 0.4; 
+  50% {
+    opacity: 0.4;
     transform: translate(20px, -20px) scale(1);
   }
 }
 
 @keyframes mobileWingFlap {
-  0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
-  50% { transform: rotateY(-12deg) rotateX(6deg); }
+  0%,
+  100% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  50% {
+    transform: rotateY(-12deg) rotateX(6deg);
+  }
 }
 
 // ====== TRANSITION ANIMATIONS ======
@@ -1003,6 +1291,7 @@ function mobileRouteChangeEffect() {
   .modern-header {
     padding: 0 1rem;
     height: 70px;
+    z-index: 10;
 
     .logo-section .modern-logo {
       gap: 0.75rem;
@@ -1035,7 +1324,9 @@ function mobileRouteChangeEffect() {
       }
     }
   }
-
+  .navigation-section {
+    z-index: 10002 !important;
+  }
   .modern-mobile-nav .mobile-nav-content {
     width: 280px;
     padding: 1.5rem;

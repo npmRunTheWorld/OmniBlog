@@ -152,4 +152,90 @@ function handleEditDetails(content, index) {
     background-color: $secondary;
   }
 }
+
+// ====== MOBILE RESPONSIVE STYLES ======
+@media (max-width: 768px) {
+  .blog__container {
+    padding: 1rem;
+    margin: 1rem 0;
+
+    .toggle {
+      .toggle-header {
+        padding: 1rem;
+
+        h2 {
+          font-size: 1.5rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+          margin: 0.75rem 0;
+        }
+      }
+
+      .toggle-edit {
+        padding: 1rem;
+        
+        span {
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .blog-card-wrap {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .blog__container {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+
+    .toggle {
+      .toggle-header {
+        padding: 0.75rem;
+
+        h2 {
+          font-size: 1.25rem;
+        }
+
+        p {
+          font-size: 0.8rem;
+          margin: 0.5rem 0;
+        }
+      }
+
+      .toggle-edit {
+        padding: 0.75rem;
+        
+        span {
+          font-size: 0.8rem;
+        }
+
+        input[type="checkbox"] {
+          width: 60px;
+          height: 30px;
+
+          &::before {
+            width: 22px;
+            height: 22px;
+          }
+
+          &:checked[type="checkbox"]::before {
+            left: 32px;
+          }
+        }
+      }
+    }
+
+    .blog-card-wrap {
+      gap: 1rem;
+      padding: 0.5rem;
+    }
+  }
+}
 </style>

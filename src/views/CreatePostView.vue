@@ -609,4 +609,115 @@ button {
     width: 10px; /* Set the width of the scrollbar */
   }
 }
+
+// ====== MOBILE RESPONSIVE STYLES ======
+@media (max-width: 768px) {
+  .create__post {
+    padding: 1rem;
+    margin: 1rem;
+
+    .container {
+      padding: 1.5rem 1rem;
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .post-title {
+        input {
+          font-size: 1.1rem;
+          padding: 0.75rem;
+        }
+      }
+
+      .categories {
+        .selectric-wrapper {
+          margin-bottom: 1rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .category-chips {
+          gap: 0.5rem;
+
+          .category-chip {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+          }
+        }
+      }
+
+      .image-upload {
+        .file-input-container {
+          padding: 1.5rem 1rem;
+        }
+
+        img {
+          max-height: 200px;
+        }
+      }
+
+      .quill-editor {
+        height: 40vh;
+      }
+
+      .buttons {
+        gap: 1rem;
+        flex-direction: column;
+
+        button {
+          width: 100%;
+          padding: 0.875rem 1.5rem;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .create__post {
+    margin: 0.5rem;
+    padding: 0.5rem;
+
+    .container {
+      padding: 1rem 0.75rem;
+
+      h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .post-title input {
+        font-size: 1rem;
+        padding: 0.6rem;
+      }
+
+      .image-upload {
+        .file-input-container {
+          padding: 1rem 0.75rem;
+        }
+
+        img {
+          max-height: 150px;
+        }
+      }
+
+      .quill-editor {
+        height: 35vh;
+      }
+
+      .categories {
+        .category-chips .category-chip {
+          font-size: 0.75rem;
+          padding: 0.3rem 0.6rem;
+        }
+      }
+    }
+  }
+}
 </style>

@@ -56,4 +56,10 @@
   border : 1px solid red;
 }
 
+@mixin muted-hov {
+  color: var(--text-muted);
 
+  &:hover {
+    color: var(--white);
+  }
+}

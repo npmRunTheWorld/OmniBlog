@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import LoginView from "../views/LoginView.vue";
-import RegisterView from "../views/RegisterView.vue";
-import ForgotPasswordView from "../views/ForgotPasswordView.vue";
-import ProfileView from "../views/ProfileView.vue";
-import AdminView from "../views/AdminView.vue";
-import viewPostView from "../views/ViewPostView.vue";
-import AboutView from "../views/AboutView.vue";
-import { useUserStore } from "../stores/userStore";
+import HomeView from "@/views/HomeView.vue";
+import LoginView from "@/views/auth/LoginView.vue";
+import RegisterView from "@/views/auth/RegisterView.vue";
+import ForgotPasswordView from "@/views/auth/ForgotPasswordView.vue";
+import ProfileView from "@/views/ProfileView.vue";
+import AdminView from "@/views/AdminView.vue";
+import viewPostView from "@/views/ViewPostView.vue";
+import AboutView from "@/views/AboutView.vue";
+import { useUserStore } from "@/stores/userStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,7 +28,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/BlogView.vue"),
+      component: () => import("@/views/BlogView.vue"),
       meta: {
         title: "Blog",
       },
@@ -39,7 +39,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (Blog.[hash].js) for this route
       // which is lazy-loaded when the route is
-      component: () => import("../views/CreatePostView.vue"),
+      component: () => import("@/views/CreatePostView.vue"),
       meta: {
         title: "Post",
       },
